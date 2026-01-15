@@ -17,7 +17,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 
 - [x] **Core Backend**
     - [x] User Service & DB Schema.
-    - [ ] Basic Media Storage (Cloudinary/S3 setup).
+    - [x] Basic Media Storage (GridFS setup).
 
 ## Phase 2: The Studio (Weeks 3-4)
 **Goal:** Build the "Trailer Creation Flow" - the heart of the app.
