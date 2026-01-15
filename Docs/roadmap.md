@@ -24,18 +24,18 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 
 - [/] **Media Capture**
     - [-] Camera interface (Record clips) - *Deferred (No physical device)*
-    - [ ] Gallery import.
+    - [x] Gallery import.
 
-- [ ] **Trailer Editor**
-    - [ ] Timeline-based sequencing (30s - 180s constraint).
-    - [ ] Tool: Title Cards ("Coming Soon", "What If").
-    - [ ] Tool: Audio (Voiceover recording, Music selection).
-    - [ ] Tool: Text overlays and cinematic fonts.
+- [x] **Trailer Editor**
+    - [x] Timeline-based sequencing (30s - 180s constraint).
+    - [x] Tool: Title Cards ("Coming Soon", "What If").
+    - [x] Tool: Audio (Voiceover recording, Music selection).
+    - [x] Tool: Text overlays and cinematic fonts.
 
-- [ ] **Publishing Flow**
-    - [ ] Metadata: Title, Description, Type (Original, Parody, etc.), Genre, Tone.
-    - [ ] Legal disclaimer injection ("Fan-created content...").
-    - [ ] Publishing endpoint.
+- [x] **Publishing Flow**
+    - [x] Metadata: Title, Description, Type (Original, Parody, etc.), Genre, Tone.
+    - [x] Legal disclaimer injection ("Fan-created content...").
+    - [x] Publishing endpoint.
 
 ## Phase 3: The Stage (Weeks 5-6)
 **Goal:** Discovery, playback, and consumption.
