@@ -15,14 +15,6 @@ export const API_ENDPOINTS = {
     },
 } as const;
 
-// User Roles (for authentication/authorization)
-export const USER_ROLES = {
-    USER: 'user',
-    ADMIN: 'admin',
-} as const;
-
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
-
 // Profile Types (viewer vs creator)
 export const PROFILE_TYPES = {
     VIEWER: 'viewer',
@@ -65,4 +57,5 @@ export const PAGINATION = {
     DEFAULT_LIMIT: 20,
     MAX_LIMIT: 100,
 } as const;
+
 
