@@ -1,43 +1,40 @@
 # Project Context
 
 ## Overview
-**Default-Mobile-First** is a production-ready mobile app starter template using a monorepo architecture.
+**FanFlick** is a creator-driven social platform for short, trailer-style storytelling.
+(Formerly: Default-Mobile-First / MyNews)
 
 ## Purpose
-Provide a reusable foundation for building mobile applications with:
-- React Native (Expo) frontend
-- Node.js (Express) backend
-- Shared packages for code reuse
-- Pre-configured CI/CD pipelines
+Enable fans and creators to reimagine stories through original or parody trailers (30s–180s). It is a "Quality-First" video platform.
 
 ## Key Goals
-1. **Developer Experience** - Fast setup, hot reload, TypeScript everywhere
-2. **Code Sharing** - Shared schemas, API client, and domain logic
-3. **Production Ready** - Authentication, state management, and CI/CD included
-4. **Mobile-First** - Optimized for mobile with NativeWind styling
+1. **Cinematic Identity**: Dark mode, minimal, trailer-centric UI.
+2. **Structured Creativity**: Content must be a "Trailer" (Original, Parody, etc.).
+3. **Active Engagement**: Reponse trailers, polls, and constructive feedback.
+4. **Mobile-First**: Optimized for editing and viewing on mobile.
 
 ## Constraints
-- Must work offline (no cloud dependencies for core functionality)
-- Must support both iOS and Android via Expo
-- Must maintain strict TypeScript compliance
-- MongoDB is the required database
+- **Content**: 30s min, 180s max.
+- **Rules**: Must be labeled (Parody/Original). No generic "vlog" content.
+- **Tech**: Expo (Managed), Node/Express, MongoDB.
 
 ## Tech Stack
 | Layer | Technology |
 |-------|------------|
 | Mobile | React Native, Expo, NativeWind |
 | State | Zustand |
-| Navigation | React Navigation |
 | Backend | Express, Mongoose |
-| Auth | JWT with refresh tokens |
-| Validation | Zod (shared) |
+| Database | MongoDB |
+| Media | S3-compatible storage (planned) |
+| Auth | JWT with Refresh Tokens |
 
 ## Repository Structure
 ```
-apps/mobile-expo/     # Expo mobile application
-backend/              # Express API server
+apps/mobile-expo/     # FanFlick Mobile Client
+backend/              # API Server
 packages/
-  ├── schemas/        # Zod validation schemas
-  ├── api-client/     # Shared HTTP client
-  └── domain/         # Business logic & constants
+  ├── schemas/        # Shared Zod definitions
+  ├── api-client/     # Typed API Client
+  └── domain/         # Constants (TrailerTypes, Roles)
+Docs/                 # Project Documentation (Roadmap, Architecture)
 ```
