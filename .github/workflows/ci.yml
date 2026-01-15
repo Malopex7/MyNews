@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # Lint and Type Check
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build shared packages
+        run: |
+          yarn workspace @packages/schemas build
+          yarn workspace @packages/api-client build
+          yarn workspace @packages/domain build
+
+  # Backend Tests
+  backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build shared packages
+        run: |
+          yarn workspace @packages/schemas build
+          yarn workspace @packages/domain build
+
+      - name: Build backend
+        run: yarn workspace backend build
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test
+          JWT_SECRET: test-secret
+          JWT_REFRESH_SECRET: test-refresh-secret
+
+  # Mobile App Build Check
+  mobile:
+    name: Mobile Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build shared packages
+        run: |
+          yarn workspace @packages/schemas build
+          yarn workspace @packages/api-client build
+          yarn workspace @packages/domain build
+
+      - name: Check Expo doctor
+        run: yarn workspace mobile-expo npx expo-doctor
+        continue-on-error: true

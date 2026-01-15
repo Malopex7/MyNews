@@ -1,0 +1,29 @@
+{
+  "name": "mobile-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace backend dev\" \"yarn workspace mobile-expo start\"",
+    "dev:backend": "yarn workspace backend dev",
+    "dev:mobile": "yarn workspace mobile-expo start",
+    "build:backend": "yarn workspace backend build",
+    "build:mobile": "yarn workspace mobile-expo build",
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

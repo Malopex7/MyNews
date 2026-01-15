@@ -1,0 +1,118 @@
+name: Decision Diff
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check-regressions:
+    name: Check Architectural Regressions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check for protected file deletions
+        id: deletions
+        run: |
+          echo "Checking for deleted protected files..."
+          
+          # Get list of deleted files
+          DELETED=$(git diff --name-only --diff-filter=D origin/${{ github.base_ref }}...HEAD)
+          
+          # Protected patterns
+          PROTECTED_PATTERNS=(
+            "backend/src/models/*.ts"
+            "packages/schemas/src/*.ts"
+            "backend/src/routes/*.ts"
+          )
+          
+          VIOLATIONS=""
+          
+          for file in $DELETED; do
+            for pattern in "${PROTECTED_PATTERNS[@]}"; do
+              if [[ "$file" == $pattern ]]; then
+                VIOLATIONS="$VIOLATIONS\n❌ BLOCKED: Deleted protected file: $file"
+              fi
+            done
+          done
+          
+          if [ -n "$VIOLATIONS" ]; then
+            echo -e "$VIOLATIONS"
+            echo "violations=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ No protected files deleted"
+            echo "violations=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for breaking changes in models
+        run: |
+          echo "Checking User model integrity..."
+          
+          if [ -f "backend/src/models/User.ts" ]; then
+            REQUIRED_FIELDS=("email" "password" "name" "role" "refreshToken")
+            
+            for field in "${REQUIRED_FIELDS[@]}"; do
+              if ! grep -q "$field" "backend/src/models/User.ts"; then
+                echo "❌ Missing required field: $field"
+                exit 1
+              fi
+            done
+            
+            echo "✅ User model contains all required fields"
+          else
+            echo "❌ User model file not found!"
+            exit 1
+          fi
+
+      - name: Check for required API routes
+        run: |
+          echo "Checking required API endpoints..."
+          
+          ROUTES_FILE="backend/src/routes/authRoutes.ts"
+          
+          if [ -f "$ROUTES_FILE" ]; then
+            REQUIRED_ROUTES=("register" "login" "refresh" "logout")
+            
+            for route in "${REQUIRED_ROUTES[@]}"; do
+              if ! grep -qi "$route" "$ROUTES_FILE"; then
+                echo "⚠️ Warning: Route '$route' may be missing"
+              fi
+            done
+            
+            echo "✅ Auth routes file exists"
+          else
+            echo "❌ Auth routes file not found!"
+            exit 1
+          fi
+
+      - name: Comment on PR if violations found
+        if: steps.deletions.outputs.violations == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ⚠️ Architectural Regression Detected
+              
+              This PR contains changes that may break the application architecture.
+              
+              Please review the following:
+              - Protected files should not be deleted without an ADR
+              - Core model fields must be preserved
+              - Required API endpoints must exist
+              
+              See \`.ai-memory/context/architecture.md\` for protected patterns.`
+            })
+
+      - name: Fail if violations
+        if: steps.deletions.outputs.violations == 'true'
+        run: exit 1

@@ -1,0 +1,42 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - 'packages/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build shared packages
+        run: |
+          yarn workspace @packages/schemas build
+          yarn workspace @packages/domain build
+
+      - name: Build backend
+        run: yarn workspace backend build
+
+      # Add your deployment steps here
+      # Examples:
+      # - Deploy to Railway, Render, or Heroku
+      # - Push Docker image to registry
+      # - Deploy to AWS, GCP, or Azure
+      
+      - name: Ready for deployment
+        run: echo "Backend built successfully! Add your deployment configuration here."

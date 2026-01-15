@@ -1,0 +1,36 @@
+# AI Memory Configuration
+
+# Project identity
+project:
+  name: "Default-Mobile-First"
+  type: "mobile-app-template"
+  
+# Files to read on AI session start
+context_files:
+  - context/project.md
+  - context/architecture.md
+  - context/conventions.md
+
+# Checkpoint configuration
+checkpoints:
+  enabled: true
+  protected_paths:
+    - "backend/src/models/**"
+    - "packages/schemas/src/**"
+    - "apps/mobile-expo/app.json"
+  
+# Decision tracking
+decisions:
+  folder: "decisions"
+  template: "001-template.md"
+  auto_number: true
+
+# Session summarization
+sessions:
+  enabled: true
+  folder: "sessions"
+  auto_commit: false
+  include:
+    - decisions_made
+    - files_changed
+    - follow_up_tasks

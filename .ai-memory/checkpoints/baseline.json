@@ -1,0 +1,69 @@
+{
+    "version": "1.0.0",
+    "created": "2026-01-15",
+    "description": "Baseline checkpoint for architectural regression detection",
+    "protected": {
+        "models": {
+            "path": "backend/src/models/User.ts",
+            "required_exports": [
+                "User",
+                "IUser"
+            ],
+            "required_fields": [
+                "email",
+                "password",
+                "name",
+                "role",
+                "refreshToken"
+            ]
+        },
+        "schemas": {
+            "path": "packages/schemas/src/",
+            "required_exports": [
+                "UserSchema",
+                "LoginDTOSchema",
+                "RegisterDTOSchema"
+            ]
+        },
+        "routes": {
+            "path": "backend/src/routes/",
+            "required_endpoints": [
+                "POST /api/auth/register",
+                "POST /api/auth/login",
+                "POST /api/auth/refresh",
+                "POST /api/auth/logout",
+                "GET /api/users/me"
+            ]
+        },
+        "app_config": {
+            "path": "apps/mobile-expo/app.json",
+            "required_fields": [
+                "expo.name",
+                "expo.slug"
+            ]
+        }
+    },
+    "rules": [
+        {
+            "id": "no-delete-models",
+            "type": "no-delete",
+            "path": "backend/src/models/*.ts",
+            "severity": "error",
+            "message": "Deleting model files is a breaking change"
+        },
+        {
+            "id": "no-delete-schemas",
+            "type": "no-delete",
+            "path": "packages/schemas/src/*.ts",
+            "severity": "error",
+            "message": "Deleting schema files breaks validation"
+        },
+        {
+            "id": "no-rename-routes",
+            "type": "no-rename",
+            "path": "backend/src/routes/*.ts",
+            "severity": "warning",
+            "message": "Renaming routes may break API consumers"
+        }
+    ]
+}
