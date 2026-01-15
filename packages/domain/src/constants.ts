@@ -10,8 +10,40 @@ export const API_ENDPOINTS = {
         BASE: '/users',
         ME: '/users/me',
         BY_ID: (id: string) => `/users/${id}`,
+        PUBLIC_PROFILE: (username: string) => `/users/${username}/profile`,
+        FOLLOW: (id: string) => `/users/${id}/follow`,
     },
 } as const;
+
+// User Roles (for authentication/authorization)
+export const USER_ROLES = {
+    USER: 'user',
+    ADMIN: 'admin',
+} as const;
+
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+
+// Profile Types (viewer vs creator)
+export const PROFILE_TYPES = {
+    VIEWER: 'viewer',
+    CREATOR: 'creator',
+} as const;
+
+export type ProfileType = (typeof PROFILE_TYPES)[keyof typeof PROFILE_TYPES];
+
+// Genres / Creative Focus Options
+export const GENRES = [
+    'action',
+    'comedy',
+    'drama',
+    'sci-fi',
+    'horror',
+    'documentary',
+    'thriller',
+    'romance',
+] as const;
+
+export type Genre = (typeof GENRES)[number];
 
 // Storage Keys
 export const STORAGE_KEYS = {
@@ -33,3 +65,4 @@ export const PAGINATION = {
     DEFAULT_LIMIT: 20,
     MAX_LIMIT: 100,
 } as const;
+

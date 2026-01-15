@@ -15,8 +15,8 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
     - [x] User Onboarding (Role selection: Viewer/Creator).
     - [x] Profile Management (Bio, Avatar, "Creative Focus").
 
-- [ ] **Core Backend**
-    - [ ] User Service & DB Schema.
+- [x] **Core Backend**
+    - [x] User Service & DB Schema.
     - [ ] Basic Media Storage (Cloudinary/S3 setup).
 
 ## Phase 2: The Studio (Weeks 3-4)

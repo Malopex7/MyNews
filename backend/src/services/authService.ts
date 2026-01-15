@@ -35,16 +35,41 @@ export const verifyRefreshToken = (token: string): { userId: string } => {
 export const register = async (
     email: string,
     password: string,
-    name: string
+    name: string,
+    username?: string
 ): Promise<{ user: IUser; accessToken: string; refreshToken: string }> => {
-    // Check if user exists
+    // Check if email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         throw new Error('Email already registered');
     }
 
-    // Create user
-    const user = await User.create({ email, password, name });
+    // Generate username if not provided
+    const finalUsername = username || email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
+
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username: finalUsername.toLowerCase() });
+    if (existingUsername) {
+        throw new Error('Username already taken');
+    }
+
+    // Create user with nested structure defaults
+    const user = await User.create({
+        email,
+        password,
+        name,
+        username: finalUsername.toLowerCase(),
+        profile: {
+            displayName: name,
+            bio: '',
+            creativeFocus: [],
+        },
+        metrics: {
+            followersCount: 0,
+            followingCount: 0,
+            totalLikesReceived: 0,
+        },
+    });
 
     // Generate tokens
     const accessToken = generateAccessToken(user);

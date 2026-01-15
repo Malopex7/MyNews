@@ -2,6 +2,37 @@ import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services';
 import { UpdateUserSchema } from '@packages/schemas';
 
+// Helper to format user response
+const formatUserResponse = (user: any, includePrivate: boolean = true) => {
+    const response: any = {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        profileType: user.profileType,
+        profile: {
+            displayName: user.profile?.displayName || user.name,
+            bio: user.profile?.bio || '',
+            avatarUrl: user.profile?.avatarUrl,
+            creativeFocus: user.profile?.creativeFocus || [],
+            website: user.profile?.website,
+        },
+        metrics: {
+            followersCount: user.metrics?.followersCount || 0,
+            followingCount: user.metrics?.followingCount || 0,
+            totalLikesReceived: user.metrics?.totalLikesReceived || 0,
+        },
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    };
+
+    if (includePrivate) {
+        response.email = user.email;
+        response.role = user.role;
+    }
+
+    return response;
+};
+
 export const getMe = async (
     req: Request,
     res: Response,
@@ -16,18 +47,7 @@ export const getMe = async (
             return;
         }
 
-        res.json({
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            profileType: user.profileType,
-            bio: user.bio,
-            avatarUrl: user.avatarUrl,
-            creativeFocus: user.creativeFocus,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        });
+        res.json(formatUserResponse(user, true));
     } catch (error) {
         next(error);
     }
@@ -46,14 +66,7 @@ export const getById = async (
             return;
         }
 
-        res.json({
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        });
+        res.json(formatUserResponse(user, true));
     } catch (error) {
         next(error);
     }
@@ -71,14 +84,7 @@ export const getAll = async (
         const { users, total, totalPages } = await userService.findAll(page, limit);
 
         res.json({
-            items: users.map((user) => ({
-                id: user._id,
-                email: user.email,
-                name: user.name,
-                role: user.role,
-                createdAt: user.createdAt,
-                updatedAt: user.updatedAt,
-            })),
+            items: users.map((user) => formatUserResponse(user, false)),
             total,
             page,
             limit,
@@ -99,41 +105,29 @@ export const update = async (
         const currentUserId = (req as any).user?.userId;
 
         // Ensure user is updating themselves or is admin
-        // Note: Full permissions logic should be in middleware or service
         if (id !== currentUserId && (req as any).user?.role !== 'admin') {
             res.status(403).json({ message: 'Forbidden' });
             return;
         }
 
-        // Just pass body to service, it should match partial schema + new field
-        // We'll trust the updated DB schema to accept it
-        const updates = req.body;
+        // Validate update data
+        const parseResult = UpdateUserSchema.safeParse(req.body);
+        if (!parseResult.success) {
+            res.status(400).json({
+                message: 'Validation failed',
+                errors: parseResult.error.flatten().fieldErrors,
+            });
+            return;
+        }
 
-        // Explicitly allow profileType if it's in the body
-        // (Assuming UpdateUserSchema might strip it if not updated yet, 
-        //  but we can arguably just pass req.body if we want to bypass Zod for this new field strictly here,
-        //  OR better: update the Zod schema in shared packages. 
-        //  For this step, let's bypass Zod validation for profileType temporarily or assume it fits.)
-
-        const user = await userService.update(id, updates);
+        const user = await userService.update(id, parseResult.data);
 
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
 
-        res.json({
-            id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            profileType: user.profileType,
-            bio: user.bio,
-            avatarUrl: user.avatarUrl,
-            creativeFocus: user.creativeFocus,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        });
+        res.json(formatUserResponse(user, true));
     } catch (error) {
         next(error);
     }
@@ -153,6 +147,154 @@ export const remove = async (
         }
 
         res.json({ success: true, message: 'User deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ============================================
+// Public Profile
+// ============================================
+
+export const getPublicProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { username } = req.params;
+        const user = await userService.getPublicProfile(username);
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.json(formatUserResponse(user, false));
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ============================================
+// Follow Operations
+// ============================================
+
+export const followUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const followerId = (req as any).user?.userId;
+        const { id: followingId } = req.params;
+
+        // Check if target user exists
+        const targetUser = await userService.findById(followingId);
+        if (!targetUser) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const result = await userService.follow(followerId, followingId);
+
+        if (result.alreadyFollowing) {
+            res.status(409).json({ message: 'Already following this user' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Now following user' });
+    } catch (error: any) {
+        if (error.message === 'Cannot follow yourself') {
+            res.status(400).json({ message: error.message });
+            return;
+        }
+        next(error);
+    }
+};
+
+export const unfollowUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const followerId = (req as any).user?.userId;
+        const { id: followingId } = req.params;
+
+        const result = await userService.unfollow(followerId, followingId);
+
+        if (!result.wasFollowing) {
+            res.status(404).json({ message: 'Was not following this user' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Unfollowed user' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getFollowers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        const { followers, total } = await userService.getFollowers(id, page, limit);
+
+        res.json({
+            items: followers.map((user) => formatUserResponse(user, false)),
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getFollowing = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        const { following, total } = await userService.getFollowing(id, page, limit);
+
+        res.json({
+            items: following.map((user) => formatUserResponse(user, false)),
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const checkFollowing = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const followerId = (req as any).user?.userId;
+        const { id: followingId } = req.params;
+
+        const isFollowing = await userService.isFollowing(followerId, followingId);
+
+        res.json({ isFollowing });
     } catch (error) {
         next(error);
     }
