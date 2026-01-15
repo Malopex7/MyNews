@@ -22,8 +22,8 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 ## Phase 2: The Studio (Weeks 3-4)
 **Goal:** Build the "Trailer Creation Flow" - the heart of the app.
 
-- [ ] **Media Capture**
-    - [ ] Camera interface (Record clips).
+- [/] **Media Capture**
+    - [-] Camera interface (Record clips) - *Deferred (No physical device)*
     - [ ] Gallery import.
 
 - [ ] **Trailer Editor**

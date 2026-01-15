@@ -22,9 +22,11 @@
         "@react-navigation/native-stack": "^6.9.17",
         "axios": "^1.6.2",
         "expo": "~50.0.0",
+        "expo-av": "~13.10.6",
         "expo-constants": "^18.0.13",
         "expo-image-picker": "^17.0.10",
         "expo-linking": "^8.0.11",
+        "expo-media-library": "~15.9.2",
         "expo-router": "~3.4.0",
         "expo-secure-store": "~12.8.0",
         "expo-status-bar": "~1.11.1",
@@ -42,6 +44,7 @@
         "@babel/core": "^7.20.0",
         "@types/react": "~18.2.45",
         "autoprefixer": "^10.4.23",
+        "nativewind": "^2.0.11",
         "tailwindcss": "3.3.2",
         "typescript": "^5.3.3"
     }
