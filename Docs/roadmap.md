@@ -5,7 +5,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 ## Phase 1: Foundation & Identity (Weeks 1-2)
 **Goal:** Establish the core infrastructure, branding, and user system.
 
-- [ ] **Project Setup**
+- [x] **Project Setup**
     - [x] Initialize branding (Cinematic, Dark Mode, Minimal).
     - [x] Set up navigation structure (Feed, Discover, Post, Inbox, Profile).
     - [x] Configure specialized typography and assets.

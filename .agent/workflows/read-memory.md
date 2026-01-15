@@ -4,7 +4,7 @@ description: Load AI Memory Layer context at session start
 
 # Read Memory
 
-Load project context from the AI Memory Layer.
+Load project context from the AI Memory Layer and initialize a new session document.
 
 ## Steps
 
@@ -21,6 +21,32 @@ Load project context from the AI Memory Layer.
    - List files in `.ai-memory/sessions/`
    - Read the most recent session if any exist
 
-5. Acknowledge what was loaded:
+5. **Create a new session document**:
+   - Create a new file at `.ai-memory/sessions/YYYY-MM-DD-session-N.md` where N is incremented if multiple sessions exist for the same day
+   - Use this template:
+
+```markdown
+# Session: [Pending Topic]
+**Date**: YYYY-MM-DD  
+**Started**: HH:MM
+
+## Objective
+[To be filled as the session progresses]
+
+## Progress
+- [ ] [Tasks will be added as work proceeds]
+
+## Files Changed
+[To be populated during session]
+
+## Notes
+[Key decisions or context to remember]
+```
+
+6. Acknowledge what was loaded:
    - Summarize key project constraints
    - Note any protected patterns from architecture.md
+   - Confirm the new session document was created
+   - Remind the user to run `/update-memory` at the end of the session
+
+// turbo-all
