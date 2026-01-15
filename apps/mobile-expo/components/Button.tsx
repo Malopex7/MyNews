@@ -14,6 +14,7 @@ interface ButtonProps {
     loading?: boolean;
     style?: ViewStyle;
     textStyle?: TextStyle;
+    className?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -58,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
         <StyledTouchable
             onPress={onPress}
             disabled={disabled || loading}
-            className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses}`}
+            className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className || ''}`}
             style={style}
         >
             {loading ? (

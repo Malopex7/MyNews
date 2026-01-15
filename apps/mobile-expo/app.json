@@ -1,11 +1,11 @@
 {
     "expo": {
-        "name": "Mobile App",
-        "slug": "mobile-app",
+        "name": "FanFlick",
+        "slug": "fanflick",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
-        "userInterfaceStyle": "automatic",
+        "userInterfaceStyle": "dark",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",

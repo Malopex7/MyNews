@@ -6,9 +6,9 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 **Goal:** Establish the core infrastructure, branding, and user system.
 
 - [ ] **Project Setup**
-    - [ ] Initialize branding (Cinematic, Dark Mode, Minimal).
-    - [ ] Set up navigation structure (Feed, Discover, Post, Inbox, Profile).
-    - [ ] Configure specialized typography and assets.
+    - [x] Initialize branding (Cinematic, Dark Mode, Minimal).
+    - [x] Set up navigation structure (Feed, Discover, Post, Inbox, Profile).
+    - [x] Configure specialized typography and assets.
 
 - [ ] **Authentication & Profiles**
     - [ ] Sign up/Login (Email, Social).

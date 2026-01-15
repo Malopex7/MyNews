@@ -10,12 +10,14 @@ interface InputProps extends TextInputProps {
     label?: string;
     error?: string;
     containerClassName?: string;
+    className?: string; // For the actual input
 }
 
 export const Input: React.FC<InputProps> = ({
     label,
     error,
     containerClassName = '',
+    className = '',
     ...props
 }) => {
     const [isFocused, setIsFocused] = useState(false);
@@ -35,7 +37,7 @@ export const Input: React.FC<InputProps> = ({
                 </StyledText>
             )}
             <StyledTextInput
-                className={inputClasses}
+                className={`${inputClasses} ${className}`}
                 placeholderTextColor="#94a3b8"
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
