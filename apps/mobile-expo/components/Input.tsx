@@ -24,21 +24,21 @@ export const Input: React.FC<InputProps> = ({
 
     const inputClasses = `
     w-full px-4 py-3 rounded-lg border text-base
-    ${error ? 'border-red-500' : isFocused ? 'border-primary-500' : 'border-secondary-300'}
-    bg-white dark:bg-secondary-800
-    text-secondary-900 dark:text-white
+    ${error ? 'border-red-500' : isFocused ? 'border-primary' : 'border-surface-highlight'}
+    bg-surface-highlight
+    text-text-primary
   `;
 
     return (
         <StyledView className={`mb-4 ${containerClassName}`}>
             {label && (
-                <StyledText className="text-secondary-700 dark:text-secondary-300 mb-2 font-medium">
+                <StyledText className="text-text-secondary mb-2 font-medium">
                     {label}
                 </StyledText>
             )}
             <StyledTextInput
                 className={`${inputClasses} ${className}`}
-                placeholderTextColor="#94a3b8"
+                placeholderTextColor="#52525b"
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 {...props}

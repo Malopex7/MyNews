@@ -16,11 +16,11 @@ export const Card: React.FC<CardProps> = ({
     className = '',
     ...props
 }) => {
-    const baseClasses = 'bg-white dark:bg-secondary-800 rounded-xl p-4';
+    const baseClasses = 'bg-surface rounded-xl p-4';
 
     const variantClasses = {
-        default: 'border border-secondary-200 dark:border-secondary-700',
-        elevated: 'shadow-lg',
+        default: 'border border-surface-highlight',
+        elevated: 'shadow-lg border border-surface-highlight',
     };
 
     return (

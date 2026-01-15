@@ -6,6 +6,9 @@ import { styled } from 'nativewind';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
+// Import global CSS for web Tailwind support
+import '../global.css';
+
 const StyledView = styled(View);
 
 // Keep the splash screen visible while we fetch resources
@@ -36,11 +39,29 @@ export default function RootLayout() {
         if (isAuthLoading || !fontsLoaded) return;
 
         const inAuthGroup = segments[0] === '(auth)';
+        const inOnboardingGroup = segments[0] === '(onboarding)';
 
-        if (isAuthenticated && inAuthGroup) {
-            router.replace('/(tabs)/feed');
-        } else if (!isAuthenticated && !inAuthGroup) {
-            router.replace('/(auth)/login');
+        if (!isAuthenticated) {
+            // If not authenticated and not in auth group, go to login
+            if (!inAuthGroup) {
+                router.replace('/(auth)/login');
+            }
+        } else {
+            // Authenticated
+            const hasProfileType = !!useAuthStore.getState().user?.profileType;
+
+            if (!hasProfileType) {
+                // If no profile type, enforce onboarding
+                if (!inOnboardingGroup) {
+                    router.replace('/(onboarding)/role-selection');
+                }
+            } else {
+                // Have profile type, should be in main app
+                // If in auth or onboarding, go to feed
+                if (inAuthGroup || inOnboardingGroup) {
+                    router.replace('/(tabs)/feed');
+                }
+            }
         }
     }, [isAuthenticated, segments, isAuthLoading, fontsLoaded]);
 

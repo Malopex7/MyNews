@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { styled } from 'nativewind';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { Card, Button } from '../../components';
 import { useAuth } from '../../hooks';
 
@@ -10,17 +11,24 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledScrollView = styled(ScrollView);
 const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledImage = styled(Image);
 
 export default function ProfileScreen() {
     const { user, logout } = useAuth();
+    const router = useRouter();
 
     const menuItems = [
-        { icon: 'person-outline', label: 'Edit Profile', onPress: () => { } },
+        { icon: 'person-outline', label: 'Edit Profile', onPress: () => router.push('/edit-profile') },
         { icon: 'notifications-outline', label: 'Notifications', onPress: () => { } },
         { icon: 'lock-closed-outline', label: 'Privacy', onPress: () => { } },
         { icon: 'help-circle-outline', label: 'Help & Support', onPress: () => { } },
         { icon: 'information-circle-outline', label: 'About', onPress: () => { } },
     ];
+
+    const formatCreativeFocus = (focus: string | undefined) => {
+        if (!focus) return null;
+        return focus.charAt(0).toUpperCase() + focus.slice(1);
+    };
 
     return (
         <StyledView className="flex-1 bg-background">
@@ -28,21 +36,54 @@ export default function ProfileScreen() {
             <StyledScrollView className="flex-1 p-4">
                 {/* Profile Header */}
                 <Card variant="elevated" className="mb-4 items-center bg-surface border-surface-highlight">
-                    <StyledView className="w-20 h-20 rounded-full bg-primary items-center justify-center mb-3">
-                        <StyledText className="text-3xl font-bold text-surface">
-                            {user?.name?.charAt(0).toUpperCase() || 'U'}
-                        </StyledText>
-                    </StyledView>
+                    {/* Avatar */}
+                    {user?.avatarUrl ? (
+                        <StyledImage
+                            source={{ uri: user.avatarUrl }}
+                            className="w-20 h-20 rounded-full mb-3"
+                        />
+                    ) : (
+                        <StyledView className="w-20 h-20 rounded-full bg-primary items-center justify-center mb-3">
+                            <StyledText className="text-3xl font-bold text-surface">
+                                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                            </StyledText>
+                        </StyledView>
+                    )}
+
+                    {/* Name */}
                     <StyledText className="text-xl font-bold text-text-primary">
                         {user?.name || 'User'}
                     </StyledText>
-                    <StyledText className="text-text-secondary">
+
+                    {/* Email */}
+                    <StyledText className="text-text-secondary text-sm">
                         {user?.email || 'user@example.com'}
                     </StyledText>
-                    <StyledView className="bg-surface-highlight px-3 py-1 rounded-full mt-2">
-                        <StyledText className="text-primary text-sm font-medium capitalize">
-                            {user?.role || 'user'}
+
+                    {/* Bio */}
+                    {user?.bio && (
+                        <StyledText className="text-text-secondary text-center mt-2 px-4">
+                            {user.bio}
                         </StyledText>
+                    )}
+
+                    {/* Badges Row */}
+                    <StyledView className="flex-row gap-2 mt-3">
+                        {/* Profile Type Badge */}
+                        <StyledView className="bg-surface-highlight px-3 py-1 rounded-full">
+                            <StyledText className="text-primary text-sm font-medium capitalize">
+                                {user?.profileType || 'viewer'}
+                            </StyledText>
+                        </StyledView>
+
+                        {/* Creative Focus Badge */}
+                        {user?.creativeFocus && (
+                            <StyledView className="bg-primary/20 px-3 py-1 rounded-full">
+                                <StyledText className="text-primary text-sm font-medium">
+                                    {formatCreativeFocus(user.creativeFocus)}
+                                </StyledText>
+                            </StyledView>
+                        )}
                     </StyledView>
                 </Card>
 

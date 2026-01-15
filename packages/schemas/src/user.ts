@@ -21,10 +21,28 @@ export const CreateUserSchema = z.object({
 
 export type CreateUserDTO = z.infer<typeof CreateUserSchema>;
 
+// Creative Focus Options
+export const CREATIVE_FOCUS_OPTIONS = [
+    'action',
+    'comedy',
+    'drama',
+    'sci-fi',
+    'horror',
+    'documentary',
+    'thriller',
+    'romance',
+] as const;
+
+export type CreativeFocus = typeof CREATIVE_FOCUS_OPTIONS[number];
+
 // Update User DTO
 export const UpdateUserSchema = z.object({
     name: z.string().min(2).max(100).optional(),
     email: z.string().email().optional(),
+    bio: z.string().max(160).optional(),
+    avatarUrl: z.string().url().optional(),
+    creativeFocus: z.enum(CREATIVE_FOCUS_OPTIONS).optional(),
+    profileType: z.enum(['viewer', 'creator']).optional(),
 });
 
 export type UpdateUserDTO = z.infer<typeof UpdateUserSchema>;

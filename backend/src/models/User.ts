@@ -6,6 +6,10 @@ export interface IUser extends Document {
     password: string;
     name: string;
     role: 'user' | 'admin';
+    profileType?: 'viewer' | 'creator';
+    bio?: string;
+    avatarUrl?: string;
+    creativeFocus?: string;
     refreshToken?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -38,6 +42,22 @@ const UserSchema = new Schema<IUser>(
             type: String,
             enum: ['user', 'admin'],
             default: 'user',
+        },
+        profileType: {
+            type: String,
+            enum: ['viewer', 'creator'],
+        },
+        bio: {
+            type: String,
+            maxlength: [160, 'Bio must be less than 160 characters'],
+            trim: true,
+        },
+        avatarUrl: {
+            type: String,
+        },
+        creativeFocus: {
+            type: String,
+            enum: ['action', 'comedy', 'drama', 'sci-fi', 'horror', 'documentary', 'thriller', 'romance'],
         },
         refreshToken: {
             type: String,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
+import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { Input, Button, Card } from '../../components';
 import { useAuth } from '../../hooks';
@@ -10,6 +11,7 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledKeyboardAvoidingView = styled(KeyboardAvoidingView);
 const StyledScrollView = styled(ScrollView);
+const StyledTouchableOpacity = styled(TouchableOpacity);
 
 export default function LoginScreen() {
     const { login, isSubmitting, error, clearError } = useAuth();
@@ -103,6 +105,26 @@ export default function LoginScreen() {
                             className="bg-primary"
                         />
                     </Card>
+
+                    {/* Social Login Placeholders */}
+                    <StyledView className="mb-6">
+                        <StyledView className="flex-row items-center mb-4">
+                            <StyledView className="flex-1 h-px bg-surface-highlight" />
+                            <StyledText className="mx-4 text-text-secondary text-sm">Or continue with</StyledText>
+                            <StyledView className="flex-1 h-px bg-surface-highlight" />
+                        </StyledView>
+
+                        <StyledView className="flex-row gap-4">
+                            <StyledTouchableOpacity className="flex-1 bg-surface-highlight p-3 rounded-lg items-center border border-surface-highlight/50 flex-row justify-center gap-2">
+                                <Ionicons name="logo-google" size={20} color="white" />
+                                <StyledText className="text-text-primary font-semibold">Google</StyledText>
+                            </StyledTouchableOpacity>
+                            <StyledTouchableOpacity className="flex-1 bg-surface-highlight p-3 rounded-lg items-center border border-surface-highlight/50 flex-row justify-center gap-2">
+                                <Ionicons name="logo-apple" size={20} color="white" />
+                                <StyledText className="text-text-primary font-semibold">Apple</StyledText>
+                            </StyledTouchableOpacity>
+                        </StyledView>
+                    </StyledView>
 
                     {/* Register Link */}
                     <StyledView className="flex-row justify-center">

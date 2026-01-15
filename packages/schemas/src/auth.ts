@@ -26,6 +26,7 @@ export const AuthResponseSchema = z.object({
         email: z.string().email(),
         name: z.string(),
         role: z.enum(['user', 'admin']),
+        profileType: z.enum(['viewer', 'creator']).optional(),
     }),
 });
 

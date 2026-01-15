@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles for FanFlick Cinematic Dark Mode */
+:root {
+    color-scheme: dark;
+}
+
+html, body, #root, #__next {
+    background-color: #09090b;
+    color: #f4f4f5;
+    min-height: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}

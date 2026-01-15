@@ -10,10 +10,10 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
     - [x] Set up navigation structure (Feed, Discover, Post, Inbox, Profile).
     - [x] Configure specialized typography and assets.
 
-- [ ] **Authentication & Profiles**
-    - [ ] Sign up/Login (Email, Social).
-    - [ ] User Onboarding (Role selection: Viewer/Creator).
-    - [ ] Profile Management (Bio, Avatar, "Creative Focus").
+- [x] **Authentication & Profiles**
+    - [x] Sign up/Login (Email, Social).
+    - [x] User Onboarding (Role selection: Viewer/Creator).
+    - [x] Profile Management (Bio, Avatar, "Creative Focus").
 
 - [ ] **Core Backend**
     - [ ] User Service & DB Schema.

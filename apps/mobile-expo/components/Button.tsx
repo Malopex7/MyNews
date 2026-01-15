@@ -26,6 +26,7 @@ export const Button: React.FC<ButtonProps> = ({
     loading = false,
     style,
     textStyle,
+    className,
 }) => {
     const baseClasses = 'rounded-lg items-center justify-center';
 
