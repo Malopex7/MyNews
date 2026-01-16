@@ -9,3 +9,6 @@ export type { AuthApi } from './auth';
 // User API
 export { createUserApi } from './user';
 export type { UserApi } from './user';
+
+// Media API
+export * from './media';

@@ -14,11 +14,20 @@
       "@packages/schemas": [
         "../../packages/schemas/src"
       ],
+      "@packages/schemas/*": [
+        "../../packages/schemas/src/*"
+      ],
       "@packages/api-client": [
         "../../packages/api-client/src"
       ],
+      "@packages/api-client/*": [
+        "../../packages/api-client/src/*"
+      ],
       "@packages/domain": [
         "../../packages/domain/src"
+      ],
+      "@packages/domain/*": [
+        "../../packages/domain/src/*"
       ]
     }
   },

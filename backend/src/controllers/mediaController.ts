@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import mongoose from 'mongoose';
 import * as mediaService from '../services/mediaService';
-import { MediaType } from '../models';
+import { MediaType, Media } from '../models';
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
@@ -232,6 +232,95 @@ export const getUserMedia = async (
             total: mediaList.length,
         });
     } catch (error) {
+        next(error);
+    }
+};
+/**
+ * Get video feed with sorting
+ * GET /api/media/feed
+ */
+export const getFeed = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const sort = (req.query.sort as string) || 'quality';
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const pipeline: any[] = [
+            // 1. Filter for videos only
+            { $match: { type: 'video' } },
+        ];
+
+        // 2. Add Quality Score calculation if sort is 'quality'
+        if (sort === 'quality') {
+            pipeline.push({
+                $addFields: {
+                    qualityScore: {
+                        $add: [
+                            { $multiply: [{ $ifNull: ['$metrics.likes', 0] }, 2] },
+                            { $multiply: [{ $ifNull: ['$metrics.comments', 0] }, 3] },
+                            { $ifNull: ['$metrics.shares', 0] },
+                        ],
+                    },
+                },
+            });
+            pipeline.push({ $sort: { qualityScore: -1, createdAt: -1 } });
+        } else {
+            // Default: Recency
+            pipeline.push({ $sort: { createdAt: -1 } });
+        }
+
+        // 3. Pagination
+        pipeline.push({ $skip: skip });
+        pipeline.push({ $limit: limit });
+
+        // 4. Lookup Creator (User)
+        pipeline.push({
+            $lookup: {
+                from: 'users',
+                localField: 'uploadedBy',
+                foreignField: '_id',
+                as: 'creatorData',
+            },
+        });
+        pipeline.push({ $unwind: '$creatorData' });
+
+        // 5. Projection
+        pipeline.push({
+            $project: {
+                id: '$_id',
+                filename: 1,
+                originalName: 1,
+                mimeType: 1,
+                size: 1,
+                type: 1,
+                metadata: 1,
+                metrics: 1,
+                title: 1,
+                description: 1,
+                genre: 1,
+                creativeType: 1,
+                createdAt: 1,
+                creator: '$creatorData.username', // Map username to 'creator'
+                url: { $concat: ['/api/media/', { $toString: '$_id' }] },
+                // Include score for debugging
+                ...(sort === 'quality' ? { qualityScore: 1 } : {}),
+            },
+        });
+
+        const items = await Media.aggregate(pipeline);
+
+        res.json({
+            items,
+            page,
+            limit,
+        });
+    } catch (error) {
+        console.error('getFeed error:', error);
         next(error);
     }
 };

@@ -17,6 +17,16 @@ export interface IMedia extends Document {
     uploadedBy: mongoose.Types.ObjectId;
     type: MediaType;
     metadata?: IMediaMetadata;
+    metrics: {
+        views: number;
+        likes: number;
+        shares: number;
+        comments: number;
+    };
+    title: string;
+    description?: string;
+    genre: string;
+    creativeType: 'Original' | 'Parody' | 'Remix';
     createdAt: Date;
 }
 
@@ -56,6 +66,21 @@ const MediaSchema = new Schema<IMedia>(
             width: Number,
             height: Number,
             duration: Number,
+        },
+        metrics: {
+            views: { type: Number, default: 0 },
+            likes: { type: Number, default: 0 },
+            shares: { type: Number, default: 0 },
+            comments: { type: Number, default: 0 },
+        },
+        // Content Metadata
+        title: { type: String, default: 'Untitled Trailer' },
+        description: { type: String },
+        genre: { type: String, default: 'General' },
+        creativeType: {
+            type: String,
+            enum: ['Original', 'Parody', 'Remix'],
+            default: 'Original',
         },
     },
     {

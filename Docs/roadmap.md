@@ -41,7 +41,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 **Goal:** Discovery, playback, and consumption.
 
 - [ ] **Feed Experience**
-    - [ ] Vertical, full-screen, cinematic player.
+    - [x] Vertical, full-screen, cinematic player.
     - [ ] Discovery logic (Quality > Recency).
     - [ ] Categories: "Top Parodies", "New Concepts", "Sci-Fi Thrillers".
 

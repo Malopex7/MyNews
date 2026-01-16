@@ -1,6 +1,8 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Dimensions, ViewToken } from 'react-native';
 import FeedItem from './FeedItem';
+import { mediaApi } from '../../services/api';
+import { FeedItem as ApiFeedItem } from '@packages/api-client';
 
 const { height } = Dimensions.get('window');
 
@@ -39,6 +41,7 @@ const FEED_DATA = [
 ];
 
 export default function FeedList() {
+    const [feedData, setFeedData] = useState<any[]>(FEED_DATA);
     const [activeVideoId, setActiveVideoId] = useState<string>(FEED_DATA[0].id);
 
     // Viewable configuration to detect which item is currently focused
@@ -46,6 +49,33 @@ export default function FeedList() {
         itemVisiblePercentThreshold: 80, // Item is considered visible if 80% is shown
     }).current;
 
+    useEffect(() => {
+        loadFeed();
+    }, []);
+
+    const loadFeed = async () => {
+        try {
+            const response = await mediaApi.getFeed({ sort: 'quality' });
+            if (response.items.length > 0) {
+                const mappedItems = response.items.map((item: ApiFeedItem) => ({
+                    id: item.id,
+                    videoUri: `${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001'}${item.url}`,
+                    title: item.title || 'Untitled',
+                    creator: item.creator || 'Unknown',
+                    genre: item.genre || 'General',
+                    type: (item.creativeType as any) || 'Original',
+                    likes: item.metrics.likes,
+                    comments: item.metrics.comments,
+                }));
+                setFeedData(mappedItems);
+                setActiveVideoId(mappedItems[0].id);
+            }
+        } catch (error) {
+            console.log('Failed to fetch feed, using mock data', error);
+        }
+    };
+
+    // ... (rest of the component)
     const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (viewableItems.length > 0) {
             const visibleItem = viewableItems[0];
@@ -55,14 +85,14 @@ export default function FeedList() {
         }
     }, []);
 
-    const renderItem = ({ item }: { item: typeof FEED_DATA[0] }) => (
+    const renderItem = ({ item }: { item: any }) => (
         <FeedItem item={item} isActive={item.id === activeVideoId} />
     );
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={FEED_DATA}
+                data={feedData}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
                 pagingEnabled
