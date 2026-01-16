@@ -27,6 +27,7 @@ export interface IUser extends Document {
     profileType?: 'viewer' | 'creator';
     profile: IUserProfile;
     metrics: IUserMetrics;
+    watchlist: mongoose.Types.ObjectId[];
     refreshToken?: string;
     createdAt: Date;
     updatedAt: Date;
@@ -135,6 +136,10 @@ const UserSchema = new Schema<IUser>(
         metrics: {
             type: MetricsSchema,
             default: () => ({}),
+        },
+        watchlist: {
+            type: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
+            default: [],
         },
         refreshToken: {
             type: String,

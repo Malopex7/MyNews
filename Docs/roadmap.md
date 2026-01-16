@@ -46,9 +46,9 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
     - [x] Categories: "Top Parodies", "New Concepts", "Sci-Fi Thrillers".
 
 - [ ] **Player Interactions**
-    - [ ] Auto-play with sound strategy.
-    - [ ] "Save to Watchlist".
-    - [ ] "Explore Creator" transition.
+    - [x] Auto-play with sound strategy.
+    - [x] "Save to Watchlist".
+    - [x] "Explore Creator" transition.
 
 ## Phase 4: Creative Exchange (Weeks 7-8)
 **Goal:** Engagement interactions specific to storytelling.

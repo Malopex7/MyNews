@@ -299,3 +299,122 @@ export const checkFollowing = async (
         next(error);
     }
 };
+
+// ============================================
+// Watchlist Operations
+// ============================================
+
+export const addToWatchlist = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = (req as any).user?.userId;
+        const { mediaId } = req.params;
+
+        const user = await userService.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        // Check if already in watchlist
+        if (user.watchlist.some((id: any) => id.toString() === mediaId)) {
+            res.status(409).json({ message: 'Already in watchlist' });
+            return;
+        }
+
+        user.watchlist.push(mediaId as any);
+        await user.save();
+
+        res.json({ success: true, message: 'Added to watchlist' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeFromWatchlist = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = (req as any).user?.userId;
+        const { mediaId } = req.params;
+
+        const user = await userService.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const index = user.watchlist.findIndex((id: any) => id.toString() === mediaId);
+        if (index === -1) {
+            res.status(404).json({ message: 'Not in watchlist' });
+            return;
+        }
+
+        user.watchlist.splice(index, 1);
+        await user.save();
+
+        res.json({ success: true, message: 'Removed from watchlist' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getWatchlist = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = (req as any).user?.userId;
+
+        const user = await userService.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        // Populate watchlist with media details
+        await user.populate('watchlist');
+
+        res.json({
+            items: user.watchlist.map((media: any) => ({
+                id: media._id,
+                title: media.title,
+                genre: media.genre,
+                creativeType: media.creativeType,
+                url: `/api/media/${media._id}`,
+            })),
+            total: user.watchlist.length,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const checkWatchlist = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = (req as any).user?.userId;
+        const { mediaId } = req.params;
+
+        const user = await userService.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const inWatchlist = user.watchlist.some((id: any) => id.toString() === mediaId);
+
+        res.json({ inWatchlist });
+    } catch (error) {
+        next(error);
+    }
+};

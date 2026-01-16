@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Dimensions, ViewToken, ActivityIndicator, Text } from 'react-native';
 import FeedItem from './FeedItem';
-import { mediaApi } from '../../services/api';
+import { mediaApi, userApi } from '../../services/api';
 import { FeedItem as ApiFeedItem } from '@packages/api-client';
 
 const { height } = Dimensions.get('window');
@@ -44,6 +44,8 @@ export default function FeedList() {
     const [feedData, setFeedData] = useState<any[]>([]);
     const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay compliance
+    const [savedItems, setSavedItems] = useState<Set<string>>(new Set());
 
     // Viewable configuration to detect which item is currently focused
     const viewabilityConfig = useRef({
@@ -95,8 +97,54 @@ export default function FeedList() {
         }
     }, []);
 
+    const toggleMute = useCallback(() => {
+        setIsMuted(prev => !prev);
+    }, []);
+
+    const toggleSave = useCallback(async (id: string) => {
+        const isSaved = savedItems.has(id);
+
+        // Optimistic update
+        setSavedItems(prev => {
+            const next = new Set(prev);
+            if (isSaved) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+
+        try {
+            if (isSaved) {
+                await userApi.removeFromWatchlist(id);
+            } else {
+                await userApi.addToWatchlist(id);
+            }
+        } catch (error) {
+            // Revert on error
+            console.error('Watchlist toggle failed:', error);
+            setSavedItems(prev => {
+                const next = new Set(prev);
+                if (isSaved) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+        }
+    }, [savedItems]);
+
     const renderItem = ({ item }: { item: any }) => (
-        <FeedItem item={item} isActive={item.id === activeVideoId} />
+        <FeedItem
+            item={item}
+            isActive={item.id === activeVideoId}
+            isMuted={isMuted}
+            onToggleMute={toggleMute}
+            isSaved={savedItems.has(item.id)}
+            onToggleSave={toggleSave}
+        />
     );
 
     if (isLoading) {

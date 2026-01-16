@@ -41,6 +41,22 @@ router.get('/:id/followers', userController.getFollowers);
 router.get('/:id/following', userController.getFollowing);
 
 // ============================================
+// Watchlist Routes (authenticated)
+// ============================================
+
+// GET /api/users/me/watchlist - Get current user's watchlist
+router.get('/me/watchlist', authenticate, userController.getWatchlist);
+
+// POST /api/users/me/watchlist/:mediaId - Add to watchlist
+router.post('/me/watchlist/:mediaId', authenticate, userController.addToWatchlist);
+
+// DELETE /api/users/me/watchlist/:mediaId - Remove from watchlist
+router.delete('/me/watchlist/:mediaId', authenticate, userController.removeFromWatchlist);
+
+// GET /api/users/me/watchlist/:mediaId - Check if in watchlist
+router.get('/me/watchlist/:mediaId', authenticate, userController.checkWatchlist);
+
+// ============================================
 // Admin Routes
 // ============================================
 
