@@ -34,6 +34,7 @@ export default function TabLayout() {
                 name="create"
                 options={{
                     title: 'Create',
+                    tabBarLabel: '',
                     tabBarIcon: ({ color, size }) => <Ionicons name="add-circle-outline" size={size} color={color} />,
                 }}
             />

@@ -21,7 +21,11 @@ Load project context from the AI Memory Layer and initialize a new session docum
    - List files in `.ai-memory/sessions/`
    - Read the most recent session if any exist
 
-5. **Create a new session document**:
+5. Acknowledge what was loaded:
+   - Summarize key project constraints
+   - Note any protected patterns from architecture.md
+
+6. **Create a new session document**:
    - Create a new file at `.ai-memory/sessions/YYYY-MM-DD-session-N.md` where N is incremented if multiple sessions exist for the same day
    - Use this template:
 
@@ -43,10 +47,6 @@ Load project context from the AI Memory Layer and initialize a new session docum
 [Key decisions or context to remember]
 ```
 
-6. Acknowledge what was loaded:
-   - Summarize key project constraints
-   - Note any protected patterns from architecture.md
-   - Confirm the new session document was created
-   - Remind the user to run `/update-memory` at the end of the session
+- Remind the user to run `/update-memory` at the end of the session
 
 // turbo-all

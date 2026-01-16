@@ -25,6 +25,7 @@
         "expo-av": "~13.10.6",
         "expo-constants": "^18.0.13",
         "expo-image-picker": "~14.7.1",
+        "expo-linear-gradient": "~12.7.2",
         "expo-linking": "^8.0.11",
         "expo-media-library": "~15.9.2",
         "expo-router": "~3.4.0",

@@ -109,19 +109,6 @@ export default function EditorScreen() {
 
     return (
         <StyledView className="flex-1 bg-background">
-            {/* Header */}
-            <StyledView className="flex-row justify-between items-center p-4 pt-12 bg-black/50 absolute top-0 w-full z-10">
-                <StyledTouchableOpacity onPress={handleBack}>
-                    <Ionicons name="close" size={28} color="white" />
-                </StyledTouchableOpacity>
-                <StyledText className="text-white font-cinematic text-lg">Editor</StyledText>
-                <StyledTouchableOpacity onPress={handleSave}>
-                    <StyledText className={`font-body-bold text-lg ${(endTime - startTime) >= 30 && (endTime - startTime) <= 180
-                        ? 'text-primary'
-                        : 'text-gray-500'
-                        }`}>Next</StyledText>
-                </StyledTouchableOpacity>
-            </StyledView>
 
             {/* Video Player & Overlay */}
             <StyledView className="flex-1 justify-center items-center relative">
@@ -180,6 +167,20 @@ export default function EditorScreen() {
 
                 {/* Toolbar */}
                 <Toolbar activeTool={activeTool} onSelectTool={setActiveTool} />
+            </StyledView>
+
+            {/* Header - Moved to bottom to ensure Z-Index stacking on top */}
+            <StyledView className="flex-row justify-between items-center p-4 pt-12 bg-black/50 absolute top-0 w-full z-50">
+                <StyledTouchableOpacity onPress={handleBack}>
+                    <Ionicons name="close" size={28} color="white" />
+                </StyledTouchableOpacity>
+                <StyledText className="text-white font-cinematic text-lg">Editor</StyledText>
+                <StyledTouchableOpacity onPress={handleSave}>
+                    <StyledText className={`font-body-bold text-lg ${(endTime - startTime) >= 30 && (endTime - startTime) <= 180
+                        ? 'text-primary'
+                        : 'text-gray-500'
+                        }`}>Next</StyledText>
+                </StyledTouchableOpacity>
             </StyledView>
         </StyledView>
     );
