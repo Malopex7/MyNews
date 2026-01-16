@@ -102,9 +102,8 @@ export const login = async (
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Save refresh token
-    user.refreshToken = refreshToken;
-    await user.save();
+    // Save refresh token (use update to avoid full document validation)
+    await User.findByIdAndUpdate(user._id, { refreshToken });
 
     return { user, accessToken, refreshToken };
 };
@@ -125,9 +124,8 @@ export const refreshTokens = async (
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
 
-    // Save new refresh token
-    user.refreshToken = newRefreshToken;
-    await user.save();
+    // Save new refresh token (use update to avoid full document validation)
+    await User.findByIdAndUpdate(user._id, { refreshToken: newRefreshToken });
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };

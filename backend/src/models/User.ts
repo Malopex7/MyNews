@@ -39,7 +39,7 @@ const ProfileSchema = new Schema<IUserProfile>(
     {
         displayName: {
             type: String,
-            required: true,
+            default: '',
             trim: true,
             minlength: 2,
             maxlength: 50,
