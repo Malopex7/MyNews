@@ -42,8 +42,8 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 
 - [ ] **Feed Experience**
     - [x] Vertical, full-screen, cinematic player.
-    - [ ] Discovery logic (Quality > Recency).
-    - [ ] Categories: "Top Parodies", "New Concepts", "Sci-Fi Thrillers".
+    - [x] Discovery logic (Quality > Recency).
+    - [x] Categories: "Top Parodies", "New Concepts", "Sci-Fi Thrillers".
 
 - [ ] **Player Interactions**
     - [ ] Auto-play with sound strategy.

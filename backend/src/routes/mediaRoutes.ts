@@ -11,6 +11,9 @@ const router = Router();
 // GET /api/media/feed - Get video feed (quality/recency)
 router.get('/feed', mediaController.getFeed);
 
+// GET /api/media/categories - Get predefined categories
+router.get('/categories', mediaController.getCategories);
+
 // GET /api/media/:id - Download/stream file (public for viewing)
 router.get('/:id', mediaController.download);
 

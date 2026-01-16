@@ -4,6 +4,8 @@ export interface FeedParams {
     page?: number;
     limit?: number;
     sort?: 'quality' | 'recency';
+    creativeType?: 'Original' | 'Parody' | 'Remix';
+    genre?: string;
 }
 
 export interface MediaMetrics {
@@ -32,9 +34,30 @@ export interface FeedResponse {
     limit: number;
 }
 
+export interface CategoryFilter {
+    creativeType?: string;
+    genre?: string;
+    sort?: 'quality' | 'recency';
+}
+
+export interface Category {
+    id: string;
+    name: string;
+    filter: CategoryFilter;
+}
+
+export interface CategoriesResponse {
+    categories: Category[];
+}
+
 export const createMediaApi = (client: AxiosInstance) => ({
     getFeed: async (params?: FeedParams): Promise<FeedResponse> => {
         const response = await client.get('/media/feed', { params });
+        return response.data;
+    },
+
+    getCategories: async (): Promise<CategoriesResponse> => {
+        const response = await client.get('/media/categories');
         return response.data;
     },
 });

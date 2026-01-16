@@ -1,12 +1,12 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Dimensions, ViewToken } from 'react-native';
+import { View, FlatList, StyleSheet, Dimensions, ViewToken, ActivityIndicator, Text } from 'react-native';
 import FeedItem from './FeedItem';
 import { mediaApi } from '../../services/api';
 import { FeedItem as ApiFeedItem } from '@packages/api-client';
 
 const { height } = Dimensions.get('window');
 
-// Mock Data for Phase 3
+// Mock Data for Phase 3 (Fallback)
 const FEED_DATA = [
     {
         id: '1',
@@ -41,8 +41,9 @@ const FEED_DATA = [
 ];
 
 export default function FeedList() {
-    const [feedData, setFeedData] = useState<any[]>(FEED_DATA);
-    const [activeVideoId, setActiveVideoId] = useState<string>(FEED_DATA[0].id);
+    const [feedData, setFeedData] = useState<any[]>([]);
+    const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Viewable configuration to detect which item is currently focused
     const viewabilityConfig = useRef({
@@ -54,8 +55,12 @@ export default function FeedList() {
     }, []);
 
     const loadFeed = async () => {
+        setIsLoading(true);
         try {
+            console.log('Fetching feed...');
             const response = await mediaApi.getFeed({ sort: 'quality' });
+            console.log('Feed response:', response.items.length, 'items');
+
             if (response.items.length > 0) {
                 const mappedItems = response.items.map((item: ApiFeedItem) => ({
                     id: item.id,
@@ -64,18 +69,23 @@ export default function FeedList() {
                     creator: item.creator || 'Unknown',
                     genre: item.genre || 'General',
                     type: (item.creativeType as any) || 'Original',
-                    likes: item.metrics.likes,
-                    comments: item.metrics.comments,
+                    likes: item.metrics?.likes || 0,
+                    comments: item.metrics?.comments || 0,
                 }));
                 setFeedData(mappedItems);
                 setActiveVideoId(mappedItems[0].id);
+            } else {
+                setFeedData([]);
             }
         } catch (error) {
             console.log('Failed to fetch feed, using mock data', error);
+            setFeedData(FEED_DATA);
+            setActiveVideoId(FEED_DATA[0].id);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    // ... (rest of the component)
     const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (viewableItems.length > 0) {
             const visibleItem = viewableItems[0];
@@ -88,6 +98,22 @@ export default function FeedList() {
     const renderItem = ({ item }: { item: any }) => (
         <FeedItem item={item} isActive={item.id === activeVideoId} />
     );
+
+    if (isLoading) {
+        return (
+            <View style={[styles.container, styles.center]}>
+                <ActivityIndicator size="large" color="#FFD700" />
+            </View>
+        );
+    }
+
+    if (feedData.length === 0) {
+        return (
+            <View style={[styles.container, styles.center]}>
+                <Text style={styles.text}>No videos found. Check back later!</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -113,7 +139,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'black',
     },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     list: {
         flex: 1,
+    },
+    text: {
+        color: 'white',
+        fontSize: 16,
+        fontFamily: 'Outfit-Medium', // Handle font later if missing
     },
 });

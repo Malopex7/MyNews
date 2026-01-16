@@ -248,11 +248,17 @@ export const getFeed = async (
         const sort = (req.query.sort as string) || 'quality';
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
+        const creativeType = req.query.creativeType as string | undefined;
+        const genre = req.query.genre as string | undefined;
         const skip = (page - 1) * limit;
 
+        // Build match filter
+        const matchFilter: any = { type: 'video' };
+        if (creativeType) matchFilter.creativeType = creativeType;
+        if (genre) matchFilter.genre = { $regex: genre, $options: 'i' };
+
         const pipeline: any[] = [
-            // 1. Filter for videos only
-            { $match: { type: 'video' } },
+            { $match: matchFilter },
         ];
 
         // 2. Add Quality Score calculation if sort is 'quality'
@@ -321,6 +327,40 @@ export const getFeed = async (
         });
     } catch (error) {
         console.error('getFeed error:', error);
+        next(error);
+    }
+};
+
+/**
+ * Get predefined categories
+ * GET /api/media/categories
+ */
+export const getCategories = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const categories = [
+            {
+                id: 'top-parodies',
+                name: 'Top Parodies',
+                filter: { creativeType: 'Parody', sort: 'quality' },
+            },
+            {
+                id: 'new-concepts',
+                name: 'New Concepts',
+                filter: { creativeType: 'Original', sort: 'recency' },
+            },
+            {
+                id: 'sci-fi-thrillers',
+                name: 'Sci-Fi Thrillers',
+                filter: { genre: 'Sci-Fi', sort: 'quality' },
+            },
+        ];
+
+        res.json({ categories });
+    } catch (error) {
         next(error);
     }
 };

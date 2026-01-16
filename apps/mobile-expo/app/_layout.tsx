@@ -1,4 +1,4 @@
-import { Slot, useRouter, useSegments } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useCallback } from 'react';
 import { useAuthStore } from '../state';
 import { View, ActivityIndicator } from 'react-native';
@@ -71,7 +71,8 @@ export default function RootLayout() {
 
     return (
         <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-            <Slot />
+            <Stack screenOptions={{ headerShown: false }} />
         </View>
     );
 }
+
