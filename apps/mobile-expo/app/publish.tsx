@@ -150,12 +150,12 @@ export default function PublishScreen() {
 
                 {/* Section: Legal */}
                 <StyledView className="flex-row items-start mb-8">
-                    <TouchableOpacity
+                    <StyledTouchableOpacity
                         onPress={() => setAgreedToLegal(!agreedToLegal)}
                         className={`w-6 h-6 rounded border mr-3 mt-1 items-center justify-center ${agreedToLegal ? 'bg-primary border-primary' : 'border-gray-500'}`}
                     >
                         {agreedToLegal && <Ionicons name="checkmark" size={16} color="black" />}
-                    </TouchableOpacity>
+                    </StyledTouchableOpacity>
                     <StyledView className="flex-1">
                         <StyledText className="text-text-secondary text-sm">
                             I certify that this is a fan creation and I am not claiming ownership of the original intellectual property. I agree to the FanFlick Terms of Service.
