@@ -29,6 +29,7 @@ export interface IUser extends Document {
     metrics: IUserMetrics;
     watchlist: mongoose.Types.ObjectId[];
     refreshToken?: string;
+    expoPushToken?: string;
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -144,6 +145,16 @@ const UserSchema = new Schema<IUser>(
         refreshToken: {
             type: String,
             select: false,
+        },
+        expoPushToken: {
+            type: String,
+            validate: {
+                validator: function (v: string) {
+                    if (!v) return true; // Optional field
+                    return /^ExponentPushToken\[.+\]$/.test(v);
+                },
+                message: 'Invalid Expo push token format'
+            },
         },
     },
     {

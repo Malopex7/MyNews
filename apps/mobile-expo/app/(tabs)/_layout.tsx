@@ -3,10 +3,35 @@ import { Ionicons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../state/authStore';
+import { usePushNotifications } from '../../hooks/usePushNotifications';
 
 export default function TabLayout() {
     const [unreadCount, setUnreadCount] = useState(0);
     const accessToken = useAuthStore((state: any) => state.accessToken);
+    const { expoPushToken } = usePushNotifications();
+
+    // Register push token with backend when we have both token and auth
+    useEffect(() => {
+        if (expoPushToken && accessToken) {
+            registerPushToken(expoPushToken, accessToken);
+        }
+    }, [expoPushToken, accessToken]);
+
+    const registerPushToken = async (token: string, authToken: string) => {
+        try {
+            await fetch('http://localhost:3001/api/users/me/push-token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ expoPushToken: token }),
+            });
+            console.log('Push token registered successfully');
+        } catch (error) {
+            console.error('Error registering push token:', error);
+        }
+    };
 
     const fetchUnreadCount = async () => {
         if (!accessToken) return;

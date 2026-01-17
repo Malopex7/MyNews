@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import { Media } from '../models';
+import { Media, User, Follow } from '../models';
 import { uploadToGridFS } from '../utils/gridfs';
 import { createResponseNotification } from '../services/notificationService';
+import { sendBatchNotifications } from '../services/pushNotificationService';
 
 /**
  * Create trailer from base64 video data
@@ -125,6 +126,40 @@ export const createTrailer = async (
         if (creativeType === 'Response' && respondingTo) {
             await createResponseNotification(respondingTo, media._id.toString(), userId);
         }
+
+        // Send push notifications to followers (async, don't wait)
+        // This happens in the background so we don't delay the response
+        (async () => {
+            try {
+                // Find all followers who have push tokens
+                const followers = await Follow.find({ followingId: userId })
+                    .populate('followerId', 'expoPushToken username profile')
+                    .lean();
+
+                const followersWithTokens = followers
+                    .filter((f: any) => f.followerId?.expoPushToken)
+                    .map((f: any) => f.followerId);
+
+                if (followersWithTokens.length > 0) {
+                    const creator = await User.findById(userId).select('profile.displayName username');
+                    const creatorName = creator?.profile?.displayName || creator?.username || 'A creator';
+
+                    const tokens = followersWithTokens.map((f: any) => f.expoPushToken);
+                    await sendBatchNotifications(
+                        tokens,
+                        '🎬 New Trailer!',
+                        `${creatorName} just posted a new trailer!`,
+                        {
+                            trailerId: media._id.toString(),
+                            type: 'new_trailer',
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error('Error sending push notifications:', error);
+                // Don't throw - notifications are not critical
+            }
+        })();
 
         res.status(201).json({
             id: media._id,

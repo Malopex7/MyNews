@@ -57,6 +57,13 @@ router.delete('/me/watchlist/:mediaId', authenticate, userController.removeFromW
 router.get('/me/watchlist/:mediaId', authenticate, userController.checkWatchlist);
 
 // ============================================
+// Push Notifications (authenticated)
+// ============================================
+
+// POST /api/users/me/push-token - Register push notification token
+router.post('/me/push-token', authenticate, userController.registerPushToken);
+
+// ============================================
 // Admin Routes
 // ============================================
 

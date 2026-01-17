@@ -433,3 +433,45 @@ export const checkWatchlist = async (
         next(error);
     }
 };
+
+// ============================================
+// Push Notifications
+// ============================================
+
+export const registerPushToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const userId = (req as any).user?.userId;
+        const { expoPushToken } = req.body;
+
+        if (!expoPushToken) {
+            res.status(400).json({ message: 'Push token is required' });
+            return;
+        }
+
+        // Validate token format
+        if (!/^ExponentPushToken\[.+\]$/.test(expoPushToken)) {
+            res.status(400).json({ message: 'Invalid push token format' });
+            return;
+        }
+
+        // Update user with push token
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { expoPushToken },
+            { new: true, runValidators: true }
+        );
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Push token registered successfully' });
+    } catch (error) {
+        next(error);
+    }
+};

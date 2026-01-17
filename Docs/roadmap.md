@@ -63,7 +63,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 
 - [x] **Notifications**
     - [x] Engagement alerts.
-    - [ ] "New Trailer from [Creator]" push notifications.
+    - [x] "New Trailer from [Creator]" push notifications.
 
 ## Phase 5: Polish & Safety (Week 9)
 **Goal:** Prepare for launch.

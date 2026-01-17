@@ -44,7 +44,8 @@
                 {
                     "microphonePermission": "Allow FanFlick to access your microphone to record voiceovers."
                 }
-            ]
+            ],
+            "expo-notifications"
         ]
     }
 }
