@@ -24,10 +24,10 @@ Phased development plan for the FanFlick Admin Dashboard.
 ## Phase 2: Report Management (Week 2)
 **Goal:** Core functionality - review and manage content reports.
 
-- [ ] Build reports list page
-  - [ ] Display reports in table format
-  - [ ] Add status badges (Pending, Reviewed, etc.)
-  - [ ] Implement pagination
+- [/] Build reports list page
+  - [x] Display reports in table format
+  - [x] Add status badges (Pending, Reviewed, etc.)
+  - [ ] Implement pagination (UI controls)
   - [ ] Add status filter dropdown
 - [ ] Build report detail page
   - [ ] Display report metadata
@@ -167,16 +167,18 @@ Phased development plan for the FanFlick Admin Dashboard.
 ## Current Status
 
 **Completed:**
-- ✅ Phase 1 - Foundation (90%)
+- ✅ Phase 1 - Foundation (100%)
   - Next.js setup
   - API client
   - Auth context
   - Login page
   - Protected routes
   - Dashboard layout
+  - End-to-end authentication test
 
 **Next Up:**
-- 🧪 Test end-to-end authentication
-- 🚀 Begin Phase 2 - Report Management
+- 🚀 Phase 2 - Report Management
+  - Reports list page (Partial)
+  - Report details page
 
 **Timeline:** Estimated 6 weeks for full implementation

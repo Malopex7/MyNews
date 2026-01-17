@@ -70,7 +70,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 
 - [x] **Moderation**
     - [x] Report content flow.
-    - [ ] Admin dashboard for review.
+    - [/] Admin dashboard for review.
     - [ ] Copyright flagging system.
 
 - [ ] **Performance**

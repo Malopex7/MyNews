@@ -26,13 +26,48 @@ api.interceptors.request.use(
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Clear tokens and redirect to login
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            window.location.href = '/login';
+    async (error) => {
+        const originalRequest = error.config;
+
+        // If error is 401 and we haven't tried to refresh yet
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const refreshToken = localStorage.getItem('refreshToken');
+                if (!refreshToken) {
+                    throw new Error('No refresh token available');
+                }
+
+                // Call refresh endpoint
+                const { data } = await axios.post(`${API_URL}/api/auth/refresh`, { refreshToken });
+
+                if (data.accessToken) {
+                    // Update tokens in storage
+                    localStorage.setItem('accessToken', data.accessToken);
+                    if (data.refreshToken) {
+                        localStorage.setItem('refreshToken', data.refreshToken);
+                    }
+
+                    // Update cookie for middleware (7 days)
+                    document.cookie = `accessToken=${data.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}`;
+
+                    // Update authorization header and retry original request
+                    originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+                    return api(originalRequest);
+                }
+            } catch (refreshError) {
+                // Refresh failed - clean up and redirect
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                // Clear cookie
+                document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+                // Let the specific page handle the 401 display or middleware handle redirect
+                // window.location.href = '/login';
+            }
         }
+
         return Promise.reject(error);
     }
 );
