@@ -140,6 +140,22 @@ export const getReport = async (
             return;
         }
 
+        // Manually populate content based on contentType
+        let content: any = null;
+        if (report.contentType === 'trailer') {
+            // Import Media model dynamically or assume it's available via mongoose or imported
+            const { Media } = await import('../models/Media');
+            content = await Media.findById(report.contentId).lean();
+        } else if (report.contentType === 'comment') {
+            const { Comment } = await import('../models/Comment');
+            content = await Comment.findById(report.contentId)
+                .populate('userId', 'username profile.displayName')
+                .lean();
+        }
+
+        // Attach content to report object
+        (report as any).content = content;
+
         res.json(report);
     } catch (error) {
         next(error);

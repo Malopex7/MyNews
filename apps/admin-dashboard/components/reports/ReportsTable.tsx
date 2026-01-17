@@ -71,11 +71,11 @@ export default function ReportsTable({ reports, isLoading }: ReportsTableProps) 
                                 {format(new Date(report.createdAt), 'MMM d, yyyy')}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                    ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                        report.status === 'actioned' ? 'bg-red-100 text-red-800' :
-                                            report.status === 'dismissed' ? 'bg-gray-100 text-gray-800' :
-                                                'bg-green-100 text-green-800'}`}>
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize tracking-wide border
+                                    ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                        report.status === 'actioned' ? 'bg-red-100 text-red-800 border-red-200' :
+                                            report.status === 'dismissed' ? 'bg-gray-100 text-gray-800 border-gray-200' :
+                                                'bg-blue-100 text-blue-800 border-blue-200'}`}>
                                     {report.status}
                                 </span>
                             </td>

@@ -30,12 +30,12 @@ Phased development plan for the FanFlick Admin Dashboard.
   - [x] Implement pagination (UI controls)
   - [x] Add status filter dropdown
 - [ ] Build report detail page
-  - [ ] Display report metadata
-  - [ ] Show reported content preview
-  - [ ] Add status update controls
-  - [ ] Add review notes textarea
-  - [ ] Implement save functionality
-- [ ] Polish report management UI
+  - [x] Display report metadata
+  - [x] Show reported content preview
+  - [x] Add status update controls
+  - [x] Add review notes textarea
+  - [x] Implement save functionality
+- [x] Polish report management UI
 - [ ] Test report workflows
 
 **Deliverable:** Admins can view, filter, and action content reports.

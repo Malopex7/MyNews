@@ -24,6 +24,7 @@ export interface Report {
     reviewNotes?: string;
     createdAt: string;
     updatedAt: string;
+    content?: any; // Populated by backend manually
 }
 
 export interface PaginatedResponse<T> {

@@ -204,19 +204,65 @@ export default function ReportDetailPage() {
                             </h2>
 
                             <div className="bg-background-paper rounded-md border border-border-default overflow-hidden">
-                                {report.contentType === 'trailer' ? (
-                                    <div className="aspect-video bg-black flex items-center justify-center text-gray-500">
-                                        {/* Placeholder for video player */}
-                                        <div className="text-center">
-                                            <Video className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                                            <p>Video Preview Placeholder</p>
-                                            <p className="text-xs mt-1">ID: {report.contentId}</p>
+                                {!report.content ? (
+                                    <div className="p-8 text-center text-text-secondary">
+                                        <ShieldAlert className="h-8 w-8 mx-auto mb-2 opacity-50 text-red-500" />
+                                        <p>Content not found.</p>
+                                        <p className="text-xs mt-1">It may have been deleted already.</p>
+                                        <p className="text-xs text-text-muted mt-2 font-mono">ID: {report.contentId}</p>
+                                    </div>
+                                ) : report.contentType === 'trailer' ? (
+                                    <div>
+                                        {/* Video Player / Thumbnail */}
+                                        <div className="aspect-video bg-black flex items-center justify-center text-gray-500 relative group">
+                                            {/* In a real app, we would use a video player here with valid URL 
+                                                e.g. <video src={`/api/media/stream/${report.contentId}`} controls ... />
+                                                For now, we'll simulate a video preview state
+                                            */}
+                                            <Video className="h-12 w-12 mx-auto opacity-50 group-hover:opacity-100 transition-opacity" />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <span className="text-white text-sm font-medium border border-white/30 px-3 py-1 rounded-full backdrop-blur-sm">
+                                                    Preview Unavailable (Stream API Pending)
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="p-4">
+                                            <h3 className="font-semibold text-text-primary text-lg">{report.content.title || 'Untitled'}</h3>
+                                            <p className="text-text-secondary text-sm mt-1 mb-3 line-clamp-3">{report.content.description}</p>
+
+                                            <div className="flex items-center gap-4 text-xs text-text-muted border-t border-border-default pt-3">
+                                                <span>Genre: {report.content.genre}</span>
+                                                <span>•</span>
+                                                <span>Views: {report.content.metrics?.views || 0}</span>
+                                                <span>•</span>
+                                                <span className="font-mono">ID: {report.content._id}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="p-6">
-                                        <p className="text-text-primary italic">"Comment content placeholder..."</p>
-                                        <p className="text-xs text-text-muted mt-2">Comment ID: {report.contentId}</p>
+                                        <div className="flex items-start gap-3 mb-3">
+                                            <div className="h-8 w-8 rounded-full bg-primary-default/20 flex items-center justify-center text-xs font-bold text-primary-default shrink-0">
+                                                {(report.content.userId?.username || 'U')[0].toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-text-primary">
+                                                    @{report.content.userId?.username || 'unknown'}
+                                                </p>
+                                                <p className="text-xs text-text-muted">
+                                                    Posted {new Date(report.content.createdAt).toLocaleString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="pl-11">
+                                            <p className="text-text-primary text-base whitespace-pre-wrap border-l-2 border-border-default pl-3 py-1">
+                                                {report.content.text}
+                                            </p>
+                                        </div>
+                                        <div className="mt-4 pt-3 border-t border-border-default flex justify-between text-xs text-text-muted">
+                                            <span className="capitalize badge bg-gray-100 px-2 py-0.5 rounded text-gray-700">Type: {report.content.type}</span>
+                                            <span className="font-mono">ID: {report.content._id}</span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
