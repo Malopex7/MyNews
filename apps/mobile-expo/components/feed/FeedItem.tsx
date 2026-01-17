@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ReportModal } from '../ReportModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,6 +30,7 @@ interface FeedItemProps {
 export default function FeedItem({ item, isActive, isMuted, onToggleMute, isSaved, onToggleSave }: FeedItemProps) {
     const video = useRef<Video>(null);
     const router = useRouter();
+    const [showReportModal, setShowReportModal] = useState(false);
 
     useEffect(() => {
         if (isActive) {
@@ -134,9 +136,30 @@ export default function FeedItem({ item, isActive, isMuted, onToggleMute, isSave
                             />
                             <Text style={styles.actionText}>{isSaved ? 'Saved' : 'Save'}</Text>
                         </TouchableOpacity>
+
+                        {/* Report Button */}
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => setShowReportModal(true)}
+                        >
+                            <Ionicons name="flag-outline" size={28} color="white" />
+                            <Text style={styles.actionText}>Report</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </SafeAreaView>
+
+            {/* Report Modal */}
+            <ReportModal
+                visible={showReportModal}
+                onClose={() => setShowReportModal(false)}
+                contentType="trailer"
+                contentId={item.id}
+                onSubmitSuccess={() => {
+                    // Could show a success toast here
+                    console.log('Report submitted successfully');
+                }}
+            />
         </View>
     );
 }

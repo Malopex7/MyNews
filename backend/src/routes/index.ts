@@ -5,6 +5,7 @@ import mediaRoutes from './mediaRoutes';
 import pollRoutes from './pollRoutes';
 import commentRoutes from './commentRoutes';
 import notificationRoutes from './notificationRoutes';
+import reportRoutes from './reportRoutes';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/media', mediaRoutes);
 router.use('/polls', pollRoutes);
 router.use('/comments', commentRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/reports', reportRoutes);
 
 export default router;
 

@@ -58,4 +58,24 @@ export const PAGINATION = {
     MAX_LIMIT: 100,
 } as const;
 
+// Report Reasons
+export const REPORT_REASONS = {
+    INAPPROPRIATE: 'inappropriate',
+    SPAM: 'spam',
+    COPYRIGHT: 'copyright',
+    HARASSMENT: 'harassment',
+    OTHER: 'other',
+} as const;
+
+export type ReportReason = (typeof REPORT_REASONS)[keyof typeof REPORT_REASONS];
+
+// Report Status
+export const REPORT_STATUS = {
+    PENDING: 'pending',
+    REVIEWED: 'reviewed',
+    DISMISSED: 'dismissed',
+    ACTIONED: 'actioned',
+} as const;
+
+export type ReportStatus = (typeof REPORT_STATUS)[keyof typeof REPORT_STATUS];
 

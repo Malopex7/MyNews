@@ -12,3 +12,5 @@ export { Media } from './Media';
 export type { IMedia, IMediaMetadata, MediaType } from './Media';
 export { Notification } from './Notification';
 export type { INotification, NotificationType } from './Notification';
+export { Report } from './Report';
+export type { IReport } from './Report';

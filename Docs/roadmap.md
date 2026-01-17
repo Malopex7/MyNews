@@ -68,8 +68,8 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 ## Phase 5: Polish & Safety (Week 9)
 **Goal:** Prepare for launch.
 
-- [ ] **Moderation**
-    - [ ] Report content flow.
+- [x] **Moderation**
+    - [x] Report content flow.
     - [ ] Admin dashboard for review.
     - [ ] Copyright flagging system.
 
