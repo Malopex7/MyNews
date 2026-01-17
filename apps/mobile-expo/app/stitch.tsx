@@ -56,7 +56,10 @@ export default function StitchScreen() {
         <StyledView className="flex-1 bg-background">
             {/* Header */}
             <StyledView className="flex-row items-center p-4 pt-12 border-b border-gray-800">
-                <StyledTouchableOpacity onPress={() => router.back()} className="mr-4">
+                <StyledTouchableOpacity
+                    onPress={() => originalId ? router.push(`/respond?originalId=${originalId}`) : router.push('/(tabs)/feed')}
+                    className="mr-4"
+                >
                     <Ionicons name="arrow-back" size={24} color="white" />
                 </StyledTouchableOpacity>
                 <StyledText className="text-white font-cinematic text-lg">Select Clip to Stitch</StyledText>

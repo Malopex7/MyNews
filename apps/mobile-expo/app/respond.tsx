@@ -73,7 +73,7 @@ export default function RespondScreen() {
         return (
             <StyledView className="flex-1 bg-background items-center justify-center">
                 <StyledText className="text-white">Original trailer not found</StyledText>
-                <StyledTouchableOpacity onPress={() => router.back()} className="mt-4">
+                <StyledTouchableOpacity onPress={() => router.push('/(tabs)/feed')} className="mt-4">
                     <StyledText className="text-primary">Go Back</StyledText>
                 </StyledTouchableOpacity>
             </StyledView>
@@ -84,7 +84,7 @@ export default function RespondScreen() {
         <StyledView className="flex-1 bg-background">
             {/* Header */}
             <StyledView className="flex-row items-center p-4 pt-12 border-b border-gray-800">
-                <StyledTouchableOpacity onPress={() => router.back()} className="mr-4">
+                <StyledTouchableOpacity onPress={() => router.push('/(tabs)/feed')} className="mr-4">
                     <Ionicons name="arrow-back" size={24} color="white" />
                 </StyledTouchableOpacity>
                 <StyledText className="text-white font-cinematic text-lg">Create Response</StyledText>
