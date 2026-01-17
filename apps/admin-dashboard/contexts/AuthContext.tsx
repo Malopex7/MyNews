@@ -55,6 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('refreshToken', response.refreshToken);
             localStorage.setItem('user', JSON.stringify(response.user));
 
+            // Also set cookie for middleware
+            document.cookie = `accessToken=${response.accessToken}; path=/; max-age=${7 * 24 * 60 * 60}`; // 7 days
+
             setUser(response.user);
         } catch (error: any) {
             throw new Error(error.response?.data?.message || error.message || 'Login failed');
@@ -65,6 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+
+        // Clear cookie
+        document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
         setUser(null);
         window.location.href = '/login';
     };

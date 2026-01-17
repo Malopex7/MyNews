@@ -11,9 +11,9 @@ Phased development plan for the FanFlick Admin Dashboard.
 - [x] Configure TypeScript, Tailwind, ESLint
 - [x] Create API client library
 - [x] Build AuthContext for session management
-- [ ] Create login page UI
-- [ ] Implement login flow with JWT
-- [ ] Add protected route middleware
+- [x] Create login page UI
+- [x] Implement login flow with JWT
+- [x] Add protected route middleware
 - [ ] Create basic dashboard layout shell
 - [ ] Test admin authentication end-to-end
 
