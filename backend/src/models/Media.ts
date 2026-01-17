@@ -27,6 +27,7 @@ export interface IMedia extends Document {
     description?: string;
     genre: string;
     creativeType: 'Original' | 'Parody' | 'Remix';
+    pollId?: mongoose.Types.ObjectId; // Optional reference to poll
     createdAt: Date;
 }
 
@@ -81,6 +82,10 @@ const MediaSchema = new Schema<IMedia>(
             type: String,
             enum: ['Original', 'Parody', 'Remix'],
             default: 'Original',
+        },
+        pollId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Poll',
         },
     },
     {

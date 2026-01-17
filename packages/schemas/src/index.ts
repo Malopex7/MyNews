@@ -3,6 +3,6 @@ export * from './user';
 
 // Auth schemas
 export * from './auth';
-
-// Common schemas
+export * from './user';
 export * from './common';
+export * from './poll.schemas';

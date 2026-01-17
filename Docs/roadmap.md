@@ -54,7 +54,7 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
 **Goal:** Engagement interactions specific to storytelling.
 
 - [ ] **Structured Feedback**
-    - [ ] Trailer-specific Polls ("Sequel?", "Cast this?").
+    - [x] Trailer-specific Polls ("Sequel?", "Cast this?").
     - [ ] Comments section with "Critique" vs "Hype" sorting.
 
 - [ ] **Response Trailers**

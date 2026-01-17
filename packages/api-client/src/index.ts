@@ -12,3 +12,6 @@ export type { UserApi } from './user';
 
 // Media API
 export * from './media';
+
+// Polls API
+export * from './polls';
