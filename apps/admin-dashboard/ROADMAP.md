@@ -27,8 +27,8 @@ Phased development plan for the FanFlick Admin Dashboard.
 - [/] Build reports list page
   - [x] Display reports in table format
   - [x] Add status badges (Pending, Reviewed, etc.)
-  - [ ] Implement pagination (UI controls)
-  - [ ] Add status filter dropdown
+  - [x] Implement pagination (UI controls)
+  - [x] Add status filter dropdown
 - [ ] Build report detail page
   - [ ] Display report metadata
   - [ ] Show reported content preview

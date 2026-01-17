@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { reportsAPI } from '@/lib/api';
-import { Report } from '@/lib/types';
+import { Report, ReportStatus } from '@/lib/types';
 import ReportsTable from '@/components/reports/ReportsTable';
 import Pagination from '@/components/common/Pagination';
+import StatusFilter from '@/components/reports/StatusFilter';
 
 // Mock data integration flag - remove when real API is populated
 const USE_MOCK_DATA = false;
@@ -42,6 +43,7 @@ export default function ReportsPage() {
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [statusFilter, setStatusFilter] = useState<ReportStatus | 'all'>('all');
     const ITEMS_PER_PAGE = 10;
 
     useEffect(() => {
@@ -51,15 +53,21 @@ export default function ReportsPage() {
                 if (USE_MOCK_DATA) {
                     // Simulate API delay
                     await new Promise(resolve => setTimeout(resolve, 500));
-                    // Mock pagination logic
+                    // Mock filtering and pagination logic
+                    let filtered = MOCK_REPORTS;
+                    if (statusFilter !== 'all') {
+                        filtered = filtered.filter(r => r.status === statusFilter);
+                    }
+
                     const start = (currentPage - 1) * ITEMS_PER_PAGE;
                     const end = start + ITEMS_PER_PAGE;
-                    setReports(MOCK_REPORTS.slice(start, end));
-                    setTotalPages(Math.ceil(MOCK_REPORTS.length / ITEMS_PER_PAGE));
+                    setReports(filtered.slice(start, end));
+                    setTotalPages(Math.ceil(filtered.length / ITEMS_PER_PAGE));
                 } else {
                     const response = await reportsAPI.getAll({
                         page: currentPage,
-                        limit: ITEMS_PER_PAGE
+                        limit: ITEMS_PER_PAGE,
+                        status: statusFilter !== 'all' ? statusFilter : undefined
                     });
 
                     if (response && Array.isArray(response.items)) {
@@ -92,7 +100,7 @@ export default function ReportsPage() {
         };
 
         fetchReports();
-    }, [currentPage]);
+    }, [currentPage, statusFilter]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -100,16 +108,27 @@ export default function ReportsPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleStatusChange = (status: ReportStatus | 'all') => {
+        setStatusFilter(status);
+        setCurrentPage(1); // Reset to first page when filter changes
+    };
+
     return (
         <div className="p-8">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-text-primary mb-2">
-                        Content Reports
-                    </h1>
-                    <p className="text-text-secondary">
-                        Review and manage user reports on content.
-                    </p>
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-text-primary mb-2">
+                            Content Reports
+                        </h1>
+                        <p className="text-text-secondary">
+                            Review and manage user reports on content.
+                        </p>
+                    </div>
+                    <StatusFilter
+                        currentStatus={statusFilter}
+                        onStatusChange={handleStatusChange}
+                    />
                 </div>
 
                 {error ? (
@@ -126,6 +145,11 @@ export default function ReportsPage() {
                                 totalPages={totalPages}
                                 onPageChange={handlePageChange}
                             />
+                        )}
+                        {!isLoading && !error && reports.length === 0 && (
+                            <div className="text-center py-12 text-text-secondary">
+                                No reports found matching the selected filters.
+                            </div>
                         )}
                     </>
                 )}
