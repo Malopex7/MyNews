@@ -18,15 +18,35 @@ export const createTrailer = async (
             title,
             description,
             genre,
-            creativeType, // 'Parody' or 'Original'
+            creativeType, // 'Parody', 'Original', or 'Response'
             videoData, // base64 data URI
             startTime,
             endTime,
+            // Response linking fields
+            respondingTo,
+            responseType, // 'full' or 'stitch'
+            stitchMetadata,
         } = req.body;
 
         if (!title || !genre || !creativeType || !videoData) {
             res.status(400).json({ message: 'Missing required fields: title, genre, creativeType, videoData' });
             return;
+        }
+
+        // Validate response fields
+        if (creativeType === 'Response') {
+            if (!respondingTo) {
+                res.status(400).json({ message: 'Response trailers must specify respondingTo' });
+                return;
+            }
+            if (!responseType || !['full', 'stitch'].includes(responseType)) {
+                res.status(400).json({ message: 'Response trailers must specify responseType: full or stitch' });
+                return;
+            }
+            if (responseType === 'stitch' && !stitchMetadata) {
+                res.status(400).json({ message: 'Stitch responses must include stitchMetadata' });
+                return;
+            }
         }
 
         // Extract base64 data from data URI
@@ -62,8 +82,8 @@ export const createTrailer = async (
         // Calculate duration if provided
         const duration = endTime && startTime ? parseFloat(endTime) - parseFloat(startTime) : undefined;
 
-        // Create Media record
-        const media = await Media.create({
+        // Build media data
+        const mediaData: any = {
             filename,
             originalName: `${title}.mp4`,
             mimeType,
@@ -86,7 +106,19 @@ export const createTrailer = async (
                 comments: 0,
                 shares: 0,
             },
-        });
+        };
+
+        // Add response fields if applicable
+        if (creativeType === 'Response' && respondingTo) {
+            mediaData.respondingTo = new mongoose.Types.ObjectId(respondingTo);
+            mediaData.responseType = responseType;
+            if (responseType === 'stitch' && stitchMetadata) {
+                mediaData.stitchMetadata = stitchMetadata;
+            }
+        }
+
+        // Create Media record
+        const media = await Media.create(mediaData);
 
         res.status(201).json({
             id: media._id,

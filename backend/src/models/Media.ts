@@ -1,6 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type MediaType = 'avatar' | 'video' | 'thumbnail';
+export type ResponseType = 'full' | 'stitch';
+
+export interface IStitchMetadata {
+    originalClipStart: number; // seconds into original video
+    originalClipEnd: number; // seconds
+    userClipStart: number; // where user's clip begins in final video
+}
 
 export interface IMediaMetadata {
     width?: number;
@@ -26,7 +33,11 @@ export interface IMedia extends Document {
     title: string;
     description?: string;
     genre: string;
-    creativeType: 'Original' | 'Parody' | 'Remix';
+    creativeType: 'Original' | 'Parody' | 'Remix' | 'Response';
+    // Response linking
+    respondingTo?: mongoose.Types.ObjectId;
+    responseType?: ResponseType;
+    stitchMetadata?: IStitchMetadata;
     pollId?: mongoose.Types.ObjectId; // Optional reference to poll
     createdAt: Date;
 }
@@ -80,8 +91,22 @@ const MediaSchema = new Schema<IMedia>(
         genre: { type: String, default: 'General' },
         creativeType: {
             type: String,
-            enum: ['Original', 'Parody', 'Remix'],
+            enum: ['Original', 'Parody', 'Remix', 'Response'],
             default: 'Original',
+        },
+        // Response linking
+        respondingTo: {
+            type: Schema.Types.ObjectId,
+            ref: 'Media',
+        },
+        responseType: {
+            type: String,
+            enum: ['full', 'stitch'],
+        },
+        stitchMetadata: {
+            originalClipStart: Number,
+            originalClipEnd: Number,
+            userClipStart: Number,
         },
         pollId: {
             type: Schema.Types.ObjectId,
@@ -98,5 +123,8 @@ MediaSchema.index({ uploadedBy: 1, type: 1 });
 
 // Index for GridFS reference
 MediaSchema.index({ gridfsId: 1 });
+
+// Index for response lookups
+MediaSchema.index({ respondingTo: 1 });
 
 export const Media = mongoose.model<IMedia>('Media', MediaSchema);

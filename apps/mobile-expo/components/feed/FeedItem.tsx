@@ -113,6 +113,15 @@ export default function FeedItem({ item, isActive, isMuted, onToggleMute, isSave
                             <Text style={styles.actionText}>Share</Text>
                         </TouchableOpacity>
 
+                        {/* Response Button */}
+                        <TouchableOpacity
+                            style={styles.actionButton}
+                            onPress={() => router.push(`/respond?originalId=${item.id}`)}
+                        >
+                            <Ionicons name="git-branch-outline" size={30} color="white" />
+                            <Text style={styles.actionText}>Respond</Text>
+                        </TouchableOpacity>
+
                         {/* Watchlist Button */}
                         <TouchableOpacity
                             style={styles.actionButton}

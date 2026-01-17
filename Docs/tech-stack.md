@@ -35,7 +35,7 @@ This document defines the **mobile-first application stack** to be used for buil
 
 ## 6. Backend & Database
 
-* **Node.js** (Express or Fastify) for backend services
+* **Node.js** (Express) for backend services
 * **MongoDB** as primary database
 * REST or GraphQL APIs for mobile consumption
 * Token-based authentication (JWT / refresh tokens)

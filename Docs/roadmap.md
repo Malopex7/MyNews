@@ -57,9 +57,9 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
     - [x] Trailer-specific Polls ("Sequel?", "Cast this?").
     - [x] Comments section with "Critique" vs "Hype" sorting.
 
-- [ ] **Response Trailers**
-    - [ ] "Stitch" or "Response" workflow.
-    - [ ] Linking answering trailers to originals.
+- [x] **Response Trailers**
+    - [x] "Stitch" or "Response" workflow.
+    - [x] Linking answering trailers to originals.
 
 - [ ] **Notifications**
     - [ ] Engagement alerts.

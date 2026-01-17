@@ -21,6 +21,11 @@ export default function PublishScreen() {
         titleStyle?: string;
         audioTrack?: string;
         voiceUri?: string;
+        // Response params
+        respondingTo?: string;
+        responseType?: string;
+        originalClipStart?: string;
+        originalClipEnd?: string;
     }>();
     const accessToken = useAuthStore((state) => state.accessToken);
 
@@ -63,10 +68,22 @@ export default function PublishScreen() {
                     title,
                     description,
                     genre,
-                    creativeType: isParody ? 'Parody' : 'Original',
+                    creativeType: params.respondingTo ? 'Response' : (isParody ? 'Parody' : 'Original'),
                     videoData: params.videoUri, // base64 data URI
                     startTime: params.startTime,
                     endTime: params.endTime,
+                    // Response fields
+                    ...(params.respondingTo && {
+                        respondingTo: params.respondingTo,
+                        responseType: params.responseType,
+                        ...(params.responseType === 'stitch' && params.originalClipStart && {
+                            stitchMetadata: {
+                                originalClipStart: parseFloat(params.originalClipStart),
+                                originalClipEnd: parseFloat(params.originalClipEnd || '0'),
+                                userClipStart: parseFloat(params.originalClipEnd || '0'),
+                            },
+                        }),
+                    }),
                 }),
             });
 
@@ -96,10 +113,26 @@ export default function PublishScreen() {
                 <StyledTouchableOpacity onPress={() => router.back()} className="mr-4">
                     <Ionicons name="arrow-back" size={24} color="white" />
                 </StyledTouchableOpacity>
-                <StyledText className="text-white font-cinematic text-lg">Publish Trailer</StyledText>
+                <StyledText className="text-white font-cinematic text-lg">
+                    {params.respondingTo ? 'Publish Response' : 'Publish Trailer'}
+                </StyledText>
             </StyledView>
 
             <StyledScrollView className="flex-1 p-6">
+                {/* Response Indicator */}
+                {params.respondingTo && (
+                    <StyledView className="mb-6 p-4 bg-surface rounded-lg border border-primary">
+                        <StyledView className="flex-row items-center">
+                            <Ionicons name="git-branch" size={20} color="#EAB308" />
+                            <StyledText className="text-primary font-bold ml-2 uppercase text-xs tracking-wider">
+                                {params.responseType === 'stitch' ? 'Stitch Response' : 'Full Response'}
+                            </StyledText>
+                        </StyledView>
+                        <StyledText className="text-text-secondary text-sm mt-1">
+                            Responding to original trailer
+                        </StyledText>
+                    </StyledView>
+                )}
 
                 {/* Section: Metadata */}
                 <StyledText className="text-primary font-bold mb-2 uppercase text-xs tracking-wider">Trailer Details</StyledText>

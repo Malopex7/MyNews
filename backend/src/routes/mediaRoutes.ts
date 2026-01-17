@@ -15,6 +15,9 @@ router.get('/feed', mediaController.getFeed);
 // GET /api/media/categories - Get predefined categories
 router.get('/categories', mediaController.getCategories);
 
+// GET /api/media/:id/responses - Get responses for a media item
+router.get('/:id/responses', require('../controllers/responseController').getMediaResponses);
+
 // GET /api/media/:id - Download/stream file (public for viewing)
 router.get('/:id', mediaController.download);
 
