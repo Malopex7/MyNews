@@ -11,12 +11,14 @@ interface VideoPlayerProps {
     uri: string;
     shouldPlay?: boolean;
     onProgress?: (position: number) => void;
+    onDurationLoad?: (duration: number) => void;
 }
 
-export function VideoPlayer({ uri, shouldPlay = true, onProgress }: VideoPlayerProps) {
+export function VideoPlayer({ uri, shouldPlay = true, onProgress, onDurationLoad }: VideoPlayerProps) {
     const video = useRef<Video>(null);
     const [status, setStatus] = useState<AVPlaybackStatus>({} as AVPlaybackStatus);
     const [isPlaying, setIsPlaying] = useState(shouldPlay);
+    const [durationReported, setDurationReported] = useState(false);
 
     const handlePlayPause = async () => {
         if (!video.current) return;
@@ -35,6 +37,13 @@ export function VideoPlayer({ uri, shouldPlay = true, onProgress }: VideoPlayerP
             setIsPlaying(status.isPlaying);
             if (onProgress) {
                 onProgress(status.positionMillis / 1000); // Convert to seconds
+            }
+            // Report duration once when video loads
+            if (!durationReported && status.durationMillis && onDurationLoad) {
+                const durationSeconds = status.durationMillis / 1000;
+                console.log('Video duration loaded:', durationSeconds);
+                onDurationLoad(durationSeconds);
+                setDurationReported(true);
             }
             if (status.didJustFinish) {
                 setIsPlaying(false);

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as mediaController from '../controllers/mediaController';
+import * as trailerController from '../controllers/trailerController';
 import { authenticate } from '../middlewares';
 
 const router = Router();
@@ -23,6 +24,9 @@ router.get('/:id/info', mediaController.getInfo);
 // ============================================
 // Authenticated Routes
 // ============================================
+
+// POST /api/media/trailer - Create trailer from base64 data
+router.post('/trailer', authenticate, trailerController.createTrailer);
 
 // POST /api/media/upload - Upload file
 router.post('/upload', authenticate, mediaController.uploadMiddleware.single('file') as any, mediaController.upload);

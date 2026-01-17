@@ -1,4 +1,4 @@
-import { createApiClient, createAuthApi, createUserApi, createMediaApi } from '@packages/api-client';
+import { createApiClient, createAuthApi, createUserApi, createMediaApi, createCommentsApi } from '@packages/api-client';
 import { useAuthStore } from '../state/authStore';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -24,3 +24,4 @@ export const apiClient = createApiClient({
 export const authApi = createAuthApi(apiClient);
 export const userApi = createUserApi(apiClient);
 export const mediaApi = createMediaApi(apiClient);
+export const commentsApi = createCommentsApi(apiClient);

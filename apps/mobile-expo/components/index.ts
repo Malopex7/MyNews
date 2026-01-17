@@ -4,3 +4,7 @@ export { Card } from './Card';
 export { Loading } from './Loading';
 export { default as PollCard } from './PollCard';
 export { default as PollCreator } from './PollCreator';
+export { default as CommentItem } from './CommentItem';
+export { default as CommentInput } from './CommentInput';
+export { default as CommentList } from './CommentList';
+export { default as CommentsSheet } from './CommentsSheet';

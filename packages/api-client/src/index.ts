@@ -15,3 +15,6 @@ export * from './media';
 
 // Polls API
 export * from './polls';
+
+// Comments API
+export * from './comments';

@@ -28,12 +28,13 @@ export function CameraScreen() {
 
             if (video) {
                 console.log('Video selected:', video);
+                console.log('Duration being passed:', video.duration, 'seconds');
                 // Navigate to Editor
                 router.push({
                     pathname: '/editor',
                     params: {
                         videoUri: video.uri,
-                        duration: video.duration
+                        duration: video.duration.toString()
                     }
                 });
             } else {

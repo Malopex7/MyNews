@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Switch, Alert } fr
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styled } from 'nativewind';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '../state/authStore';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -21,6 +22,7 @@ export default function PublishScreen() {
         audioTrack?: string;
         voiceUri?: string;
     }>();
+    const accessToken = useAuthStore((state) => state.accessToken);
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -33,32 +35,58 @@ export default function PublishScreen() {
 
     const handlePublish = async () => {
         if (!title.trim()) {
-            Alert.alert("Missing Title", "Please give your trailer a title.");
+            console.warn("Missing title");
             return;
         }
         if (!genre) {
-            Alert.alert("Missing Genre", "Please select a genre.");
+            console.warn("Missing genre");
             return;
         }
         if (!agreedToLegal) {
-            Alert.alert("Legal Required", "You must acknowledge the legal disclaimer to publish.");
+            console.warn("Legal not agreed");
             return;
         }
 
         setIsPublishing(true);
 
-        // Simulate API Call
-        setTimeout(() => {
-            setIsPublishing(false);
-            console.log("Published Trailer:", {
-                ...params,
-                metadata: { title, description, genre, type: isParody ? 'Parody' : 'Original' }
+        try {
+            console.log("Publishing trailer to backend...");
+
+            // Call the actual API to create trailer
+            const response = await fetch('http://localhost:3001/api/media/trailer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    genre,
+                    creativeType: isParody ? 'Parody' : 'Original',
+                    videoData: params.videoUri, // base64 data URI
+                    startTime: params.startTime,
+                    endTime: params.endTime,
+                }),
             });
 
-            Alert.alert("Published!", "Your trailer is now live.", [
-                { text: "Awesome", onPress: () => router.push('/(tabs)/inbox') } // Redirect to Inbox or Feed
-            ]);
-        }, 2000);
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(`Failed to publish: ${error}`);
+            }
+
+            const result = await response.json();
+            console.log("✅ Trailer published successfully:", result);
+
+            setIsPublishing(false);
+
+            // Navigate to feed
+            router.replace('/(tabs)/feed');
+        } catch (error) {
+            console.error("Failed to publish:", error);
+            setIsPublishing(false);
+            console.error("❌ Error: Failed to publish trailer");
+        }
     };
 
     return (

@@ -35,7 +35,7 @@ export const useMediaLibrary = () => {
                 return {
                     uri: asset.uri,
                     type: 'video', // We only asked for videos
-                    duration: asset.duration ?? 0,
+                    duration: asset.duration ? asset.duration / 1000 : 0, // Convert ms to seconds
                     width: asset.width,
                     height: asset.height,
                 };

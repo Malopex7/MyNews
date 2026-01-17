@@ -19,7 +19,10 @@ export default function EditorScreen() {
     const videoUri = params.videoUri;
     const duration = parseFloat(params.duration || '0');
 
+    console.log('Editor params:', { videoUri, duration, rawDuration: params.duration });
+
     // State
+    const [actualDuration, setActualDuration] = useState(duration);
     const [currentTime, setCurrentTime] = useState(0);
     const [startTime, setStartTime] = useState(0);
     const [endTime, setEndTime] = useState(duration);
@@ -31,6 +34,14 @@ export default function EditorScreen() {
     });
     const [audioTrack, setAudioTrack] = useState<string | null>(null);
     const [voiceUri, setVoiceUri] = useState<string | null>(null);
+
+    const handleDurationLoad = (loadedDuration: number) => {
+        console.log('Loaded duration from video:', loadedDuration);
+        setActualDuration(loadedDuration);
+        if (endTime === 0 || endTime === duration) {
+            setEndTime(loadedDuration);
+        }
+    };
 
     const handleBack = () => {
         Alert.alert(
@@ -115,6 +126,7 @@ export default function EditorScreen() {
                 <VideoPlayer
                     uri={videoUri}
                     onProgress={setCurrentTime}
+                    onDurationLoad={handleDurationLoad}
                 />
                 <TitleCardOverlay
                     text={titleCard.text}
@@ -129,7 +141,7 @@ export default function EditorScreen() {
                 <StyledView className="min-h-[100px] justify-center">
                     {activeTool === 'trim' && (
                         <Trimmer
-                            duration={duration}
+                            duration={actualDuration}
                             currentTime={currentTime}
                             startTime={startTime}
                             endTime={endTime}

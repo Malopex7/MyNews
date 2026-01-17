@@ -6,5 +6,7 @@ export { Poll } from './Poll';
 export type { IPoll, IPollOption, PollTemplateType } from './Poll';
 export { PollVote } from './PollVote';
 export type { IPollVote } from './PollVote';
+export { Comment } from './Comment';
+export type { IComment, CommentType } from './Comment';
 export { Media } from './Media';
 export type { IMedia, IMediaMetadata, MediaType } from './Media';

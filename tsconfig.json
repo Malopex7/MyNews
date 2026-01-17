@@ -1,52 +1,53 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "lib": [
-            "ES2022"
-        ],
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "declaration": true,
-        "declarationMap": true,
-        "composite": true,
-        "baseUrl": ".",
-        "paths": {
-            "@packages/schemas": [
-                "packages/schemas/src"
-            ],
-            "@packages/api-client": [
-                "packages/api-client/src"
-            ],
-            "@packages/domain": [
-                "packages/domain/src"
-            ]
-        }
-    },
-    "references": [
-        {
-            "path": "./packages/schemas"
-        },
-        {
-            "path": "./packages/api-client"
-        },
-        {
-            "path": "./packages/domain"
-        },
-        {
-            "path": "./backend"
-        },
-        {
-            "path": "./apps/mobile-expo"
-        }
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2022"
     ],
-    "exclude": [
-        "node_modules",
-        "**/dist",
-        "**/build"
-    ]
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@packages/schemas": [
+        "packages/schemas/src"
+      ],
+      "@packages/api-client": [
+        "packages/api-client/src"
+      ],
+      "@packages/domain": [
+        "packages/domain/src"
+      ]
+    }
+  },
+  "references": [
+    {
+      "path": "./packages/schemas"
+    },
+    {
+      "path": "./packages/api-client"
+    },
+    {
+      "path": "./packages/domain"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./apps/mobile-expo"
+    }
+  ],
+  "exclude": [
+    "node_modules",
+    "**/dist",
+    "**/build"
+  ],
+  "extends": "expo/tsconfig.base"
 }

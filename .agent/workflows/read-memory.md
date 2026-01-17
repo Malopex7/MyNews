@@ -21,9 +21,9 @@ Load project context from the AI Memory Layer and initialize a new session docum
    - List files in `.ai-memory/sessions/`
    - Read the most recent session if any exist
 
-5. Acknowledge what was loaded:
-   - Summarize key project constraints
-   - Note any protected patterns from architecture.md
+5. **Write a very short confirmation summary** (1-8 lines max):
+   - Brief confirmation that context was loaded (project name, current phase)
+   - Do NOT provide detailed summaries or long explanations
 
 6. **Create a new session document**:
    - Create a new file at `.ai-memory/sessions/YYYY-MM-DD-session-N.md` where N is incremented if multiple sessions exist for the same day
