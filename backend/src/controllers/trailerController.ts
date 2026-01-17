@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { Media } from '../models';
 import { uploadToGridFS } from '../utils/gridfs';
+import { createResponseNotification } from '../services/notificationService';
 
 /**
  * Create trailer from base64 video data
@@ -119,6 +120,11 @@ export const createTrailer = async (
 
         // Create Media record
         const media = await Media.create(mediaData);
+
+        // Create notification if this is a response
+        if (creativeType === 'Response' && respondingTo) {
+            await createResponseNotification(respondingTo, media._id.toString(), userId);
+        }
 
         res.status(201).json({
             id: media._id,

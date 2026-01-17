@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Comment, Media } from '../models';
 import mongoose from 'mongoose';
+import { createCommentNotification } from '../services/notificationService';
 
 // Create a comment
 export const createComment = async (req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +39,9 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
         await Media.findByIdAndUpdate(mediaId, {
             $inc: { 'metrics.comments': 1 },
         });
+
+        // Create notification for media owner
+        await createCommentNotification(mediaId, comment._id.toString(), userId.toString());
 
         // Populate user data
         const populatedComment = await Comment.findById(comment._id).populate('userId', 'name email profile.avatar');

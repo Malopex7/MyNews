@@ -61,8 +61,8 @@ This roadmap outlines the phased development of FanFlick, a creator-driven socia
     - [x] "Stitch" or "Response" workflow.
     - [x] Linking answering trailers to originals.
 
-- [ ] **Notifications**
-    - [ ] Engagement alerts.
+- [x] **Notifications**
+    - [x] Engagement alerts.
     - [ ] "New Trailer from [Creator]" push notifications.
 
 ## Phase 5: Polish & Safety (Week 9)

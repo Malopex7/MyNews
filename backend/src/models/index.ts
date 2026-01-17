@@ -10,3 +10,5 @@ export { Comment } from './Comment';
 export type { IComment, CommentType } from './Comment';
 export { Media } from './Media';
 export type { IMedia, IMediaMetadata, MediaType } from './Media';
+export { Notification } from './Notification';
+export type { INotification, NotificationType } from './Notification';
