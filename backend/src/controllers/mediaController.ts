@@ -118,6 +118,9 @@ export const download = async (
                 'Accept-Ranges': 'bytes',
                 'Content-Length': chunkSize,
                 'Content-Type': media.mimeType,
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Range',
+                'Access-Control-Expose-Headers': 'Content-Length, Content-Range',
             });
 
             const stream = mediaService.getStreamWithRange(media.gridfsId, start, end);
@@ -128,6 +131,9 @@ export const download = async (
                 'Content-Type': media.mimeType,
                 'Content-Length': fileSize,
                 'Content-Disposition': `inline; filename="${media.originalName}"`,
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Range',
+                'Access-Control-Expose-Headers': 'Content-Length, Content-Range',
             });
 
             const stream = mediaService.getStream(media.gridfsId);
@@ -293,7 +299,7 @@ export const getFeed = async (
                 as: 'creatorData',
             },
         });
-        pipeline.push({ $unwind: '$creatorData' });
+        pipeline.push({ $unwind: { path: '$creatorData', preserveNullAndEmptyArrays: true } });
 
         // 5. Projection
         pipeline.push({
@@ -311,7 +317,7 @@ export const getFeed = async (
                 genre: 1,
                 creativeType: 1,
                 createdAt: 1,
-                creator: '$creatorData.username', // Map username to 'creator'
+                creator: { $ifNull: ['$creatorData.username', 'deleted_user'] }, // Fallback for missing users
                 url: { $concat: ['/api/media/', { $toString: '$_id' }] },
                 // Include score for debugging
                 ...(sort === 'quality' ? { qualityScore: 1 } : {}),

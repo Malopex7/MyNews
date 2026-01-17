@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services';
 import { UpdateUserSchema } from '@packages/schemas';
+import mongoose from 'mongoose';
+import { Media, User } from '../models';
 
 // Helper to format user response
 const formatUserResponse = (user: any, includePrivate: boolean = true) => {
@@ -313,20 +315,30 @@ export const addToWatchlist = async (
         const userId = (req as any).user?.userId;
         const { mediaId } = req.params;
 
-        const user = await userService.findById(userId);
-        if (!user) {
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(mediaId)) {
+            res.status(400).json({ message: 'Invalid media ID format' });
+            return;
+        }
+
+        // Check if media exists
+        const media = await Media.findById(mediaId);
+        if (!media) {
+            res.status(404).json({ message: 'Media not found' });
+            return;
+        }
+
+        // Use atomic update to avoid validation issues
+        const result = await User.findByIdAndUpdate(
+            userId,
+            { $addToSet: { watchlist: new mongoose.Types.ObjectId(mediaId) } },
+            { new: true }
+        );
+
+        if (!result) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-
-        // Check if already in watchlist
-        if (user.watchlist.some((id: any) => id.toString() === mediaId)) {
-            res.status(409).json({ message: 'Already in watchlist' });
-            return;
-        }
-
-        user.watchlist.push(mediaId as any);
-        await user.save();
 
         res.json({ success: true, message: 'Added to watchlist' });
     } catch (error) {
@@ -343,20 +355,23 @@ export const removeFromWatchlist = async (
         const userId = (req as any).user?.userId;
         const { mediaId } = req.params;
 
-        const user = await userService.findById(userId);
-        if (!user) {
+        // Validate ObjectId format
+        if (!mongoose.Types.ObjectId.isValid(mediaId)) {
+            res.status(400).json({ message: 'Invalid media ID format' });
+            return;
+        }
+
+        // Use atomic update to remove from watchlist
+        const result = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { watchlist: new mongoose.Types.ObjectId(mediaId) } },
+            { new: true }
+        );
+
+        if (!result) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-
-        const index = user.watchlist.findIndex((id: any) => id.toString() === mediaId);
-        if (index === -1) {
-            res.status(404).json({ message: 'Not in watchlist' });
-            return;
-        }
-
-        user.watchlist.splice(index, 1);
-        await user.save();
 
         res.json({ success: true, message: 'Removed from watchlist' });
     } catch (error) {

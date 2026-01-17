@@ -18,16 +18,21 @@ export default function RegisterScreen() {
     const router = useRouter();
 
     const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
+    const [errors, setErrors] = useState<{ name?: string; username?: string; email?: string; password?: string; confirmPassword?: string }>({});
 
     const validate = (): boolean => {
-        const newErrors: { name?: string; email?: string; password?: string; confirmPassword?: string } = {};
+        const newErrors: { name?: string; username?: string; email?: string; password?: string; confirmPassword?: string } = {};
 
         if (!name.trim()) newErrors.name = 'Name is required';
         else if (name.length < 2) newErrors.name = 'Name must be at least 2 characters';
+
+        if (!username.trim()) newErrors.username = 'Username is required';
+        else if (username.length < 3) newErrors.username = 'Username must be at least 3 characters';
+        else if (!/^[a-z0-9_]+$/.test(username)) newErrors.username = 'Username can only contain lowercase letters, numbers, and underscores';
 
         if (!email) newErrors.email = 'Email is required';
         else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email format';
@@ -45,7 +50,7 @@ export default function RegisterScreen() {
         clearError();
         if (!validate()) return;
 
-        const success = await register({ email, password, name });
+        const success = await register({ email, password, name, username });
         if (success) {
             // Navigation is handled by the _layout or useAuth logic usually, 
             // but just in case we need manual intervention or to show a success message first.
@@ -92,6 +97,16 @@ export default function RegisterScreen() {
                             placeholder="Enter your name"
                             autoCapitalize="words"
                             error={errors.name}
+                            className="bg-surface-highlight text-text-primary border-surface-highlight"
+                        />
+
+                        <Input
+                            label="Username"
+                            value={username}
+                            onChangeText={(text) => setUsername(text.toLowerCase())}
+                            placeholder="Enter username (lowercase only)"
+                            autoCapitalize="none"
+                            error={errors.username}
                             className="bg-surface-highlight text-text-primary border-surface-highlight"
                         />
 
