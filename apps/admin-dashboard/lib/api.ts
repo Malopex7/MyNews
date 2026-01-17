@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { PaginatedResponse, Report, User } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -51,7 +52,7 @@ export const authAPI = {
 
 // Reports API
 export const reportsAPI = {
-    getAll: async (params?: { status?: string; page?: number; limit?: number }) => {
+    getAll: async (params?: { status?: string; page?: number; limit?: number }): Promise<PaginatedResponse<Report>> => {
         const { data } = await api.get('/api/reports', { params });
         return data;
     },

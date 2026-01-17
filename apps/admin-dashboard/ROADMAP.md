@@ -15,7 +15,7 @@ Phased development plan for the FanFlick Admin Dashboard.
 - [x] Implement login flow with JWT
 - [x] Add protected route middleware
 - [x] Create basic dashboard layout shell
-- [ ] Test admin authentication end-to-end
+- [x] Test admin authentication end-to-end
 
 **Deliverable:** Admins can log in and see an empty dashboard home.
 
