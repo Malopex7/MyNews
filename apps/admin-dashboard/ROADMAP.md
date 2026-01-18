@@ -47,8 +47,8 @@ Phased development plan for the FanFlick Admin Dashboard.
 
 ### Backend Requirements
 - [x] Create user suspend/unsuspend endpoints
-  - [ ] `PATCH /api/users/:id/suspend`
-  - [ ] `PATCH /api/users/:id/unsuspend`
+  - [x] `POST /api/users/:id/suspend`
+  - [x] `POST /api/users/:id/unsuspend`
 - [ ] Update User model with `suspended` field
 - [ ] Add user activity endpoint
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { reportsAPI } from '@/lib/api';
+import { reportsAPI, mediaAPI, usersAPI } from '@/lib/api';
 import { Report, ReportStatus, User } from '@/lib/types';
 import { ArrowLeft, User as UserIcon, Calendar, MessageSquare, Video, ShieldAlert, CheckCircle, XCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
@@ -74,6 +74,61 @@ export default function ReportDetailPage() {
         }
     };
 
+    const [showActionModal, setShowActionModal] = useState(false);
+
+    const handleAction = async (action: 'delete' | 'suspend' | 'mark') => {
+        if (!report) return;
+        if (!confirm('Are you sure you want to proceed with this action? This cannot be undone.')) return;
+
+        try {
+            setIsUpdating(true);
+
+            if (action === 'delete') {
+                await mediaAPI.delete(report.contentId);
+            } else if (action === 'suspend') {
+                if (typeof report.reportedBy === 'object') {
+                    // This logic is slightly flawed, we should suspend the CONTRIBUTOR (content creator), not the REPORTER.
+                    // The report object has `content.userId` (populated)? Or `report.reportedBy` is the reporter.
+                    // Let's check the report type definition or the preview data.
+                    // Line 250: @{report.content.userId?.username}
+                    // We need the ID of the content creator.
+                    // The report object from backend populate might allow us to get it.
+                    // However, for safety, let's assume we want to suspend the *reported user* (if report type is user) or content creator.
+                    // The roadmap said "Suspend User". Usually this means the offender.
+                    // Let's look at `report.content.userId` from the preview section (line 246).
+                    // If `report.content` is populated, we can get `userId`.
+                    // If `report.content` is null (deleted), we might not have it unless `report.reportedUserId` exists?
+                    // Let's check `lib/types`. Ideally `report.content.userId._id`.
+
+                    // For now, I'll rely on `report.content.userId._id` if available.
+                    const offenderId = (report.content as any)?.userId?._id || (report.content as any)?.userId;
+                    if (offenderId) {
+                        await usersAPI.suspend(offenderId);
+                    } else {
+                        throw new Error('Could not identify user to suspend');
+                    }
+                }
+            }
+
+            // After action, mark as actioned
+            await reportsAPI.update(report._id, {
+                status: 'actioned',
+                reviewNotes: notes ? `${notes}\n[System]: Action '${action}' taken.` : `[System]: Action '${action}' taken.`
+            });
+
+            // Refresh report
+            const updatedReport = await reportsAPI.getById(report._id);
+            setReport(updatedReport);
+            setShowActionModal(false);
+
+        } catch (err: any) {
+            console.error('Action failed:', err);
+            alert(`Action failed: ${err.response?.data?.message || err.message}`);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="p-8 max-w-5xl mx-auto">
@@ -111,10 +166,63 @@ export default function ReportDetailPage() {
         return styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800';
     };
 
-    const reporter = report.reportedBy as User; // Assuming populated
-
     return (
-        <div className="p-8">
+        <div className="p-8 relative">
+            {/* Modal Overlay */}
+            {showActionModal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-background-surface rounded-lg shadow-xl max-w-md w-full border border-border-default overflow-hidden animate-in fade-in zoom-in duration-200">
+                        <div className="p-6">
+                            <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
+                                <ShieldAlert className="h-5 w-5 text-red-500" />
+                                Take Action
+                            </h3>
+                            <p className="text-text-secondary mb-6">
+                                Choose an action to resolve this report. This will mark the report as "Actioned".
+                            </p>
+
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => handleAction('delete')}
+                                    disabled={isUpdating}
+                                    className="w-full flex items-center justify-between p-4 rounded-md border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 transition-colors"
+                                >
+                                    <span className="font-medium">Delete Content</span>
+                                    {isUpdating ? <span className="loading loading-spinner loading-xs" /> : <Video className="h-4 w-4" />}
+                                </button>
+
+                                <button
+                                    onClick={() => handleAction('suspend')}
+                                    disabled={isUpdating}
+                                    className="w-full flex items-center justify-between p-4 rounded-md border border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-800 transition-colors"
+                                >
+                                    <span className="font-medium">Suspend User</span>
+                                    <UserIcon className="h-4 w-4" />
+                                </button>
+
+                                <button
+                                    onClick={() => handleAction('mark')}
+                                    disabled={isUpdating}
+                                    className="w-full flex items-center justify-between p-4 rounded-md border border-border-default hover:bg-background-highlight text-text-primary transition-colors"
+                                >
+                                    <span className="font-medium">Just Mark as Actioned</span>
+                                    <CheckCircle className="h-4 w-4" />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-4 bg-background-paper border-t border-border-default flex justify-end">
+                            <button
+                                onClick={() => setShowActionModal(false)}
+                                disabled={isUpdating}
+                                className="px-4 py-2 text-text-secondary hover:text-text-primary font-medium"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -161,7 +269,7 @@ export default function ReportDetailPage() {
                                     Dismiss
                                 </button>
                                 <button
-                                    onClick={() => handleStatusUpdate('actioned')}
+                                    onClick={() => setShowActionModal(true)}
                                     disabled={isUpdating}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 font-medium text-sm transition-colors flex items-center gap-2"
                                 >

@@ -103,6 +103,14 @@ export const reportsAPI = {
     },
 };
 
+// Media API
+export const mediaAPI = {
+    delete: async (id: string) => {
+        const { data } = await api.delete(`/api/media/${id}`);
+        return data;
+    }
+};
+
 // Users API
 export const usersAPI = {
     getAll: async (params?: { page?: number; limit?: number; search?: string }) => {
