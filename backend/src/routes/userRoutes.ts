@@ -85,4 +85,7 @@ router.post('/:id/unsuspend', authenticate, authorize('admin'), userController.u
 // GET /api/users/:id/activity - Get user activity (admin only)
 router.get('/:id/activity', authenticate, authorize('admin'), userController.getUserActivity);
 
+// GET /api/users/:id/reports - Get reports involving user (admin only)
+router.get('/:id/reports', authenticate, authorize('admin'), userController.getUserReports);
+
 export default router;

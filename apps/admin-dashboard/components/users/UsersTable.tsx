@@ -108,7 +108,7 @@ export default function UsersTable({ users, isLoading }: UsersTableProps) {
                                 </td>
                                 <td className="py-4 px-6">
                                     <Link
-                                        href={`/dashboard/users/${user._id}`}
+                                        href={`/dashboard/users/${user._id || user.id}`}
                                         className="text-gold-500 hover:text-gold-400 font-medium text-sm transition-colors"
                                     >
                                         View Details →

@@ -98,6 +98,11 @@ export const login = async (
         throw new Error('Invalid email or password');
     }
 
+    // Check if user is suspended
+    if (user.suspended) {
+        throw new Error('Your account has been suspended. Please contact support.');
+    }
+
     // Generate tokens
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
@@ -118,6 +123,11 @@ export const refreshTokens = async (
     const user = await User.findById(payload.userId).select('+refreshToken');
     if (!user || user.refreshToken !== refreshToken) {
         throw new Error('Invalid refresh token');
+    }
+
+    // Check if user is suspended
+    if (user.suspended) {
+        throw new Error('Your account has been suspended. Please contact support.');
     }
 
     // Generate new tokens

@@ -7,10 +7,12 @@ import { Media, User, Comment, Report } from '../models';
 // Helper to format user response
 const formatUserResponse = (user: any, includePrivate: boolean = true) => {
     const response: any = {
+        _id: user._id, // Keep _id for admin dashboard compatibility
         id: user._id,
         username: user.username,
         name: user.name,
         profileType: user.profileType,
+        suspended: user.suspended || false,
         profile: {
             displayName: user.profile?.displayName || user.name,
             bio: user.profile?.bio || '',
@@ -614,6 +616,71 @@ export const getUserActivity = async (
         res.json({
             items: limitedActivity,
             total: limitedActivity.length,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ============================================
+// User Reports (Admin)
+// ============================================
+
+export const getUserReports = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid user ID format' });
+            return;
+        }
+
+        const userId = new mongoose.Types.ObjectId(id);
+
+        // Fetch reports filed BY this user
+        const reportsFiled = await Report.find({ reportedBy: userId })
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .select('reason status contentType createdAt')
+            .lean();
+
+        // Fetch reports filed AGAINST this user's content
+        // First, get user's media IDs
+        const userMedia = await Media.find({ uploadedBy: userId }).select('_id').lean();
+        const mediaIds = userMedia.map((m: any) => m._id);
+
+        const reportsAgainst = await Report.find({
+            contentType: 'trailer',
+            contentId: { $in: mediaIds.map((id: any) => id.toString()) }
+        })
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .select('reason status contentType contentId createdAt')
+            .lean();
+
+        res.json({
+            reportsFiled: reportsFiled.map((r: any) => ({
+                _id: r._id,
+                reason: r.reason,
+                status: r.status,
+                contentType: r.contentType,
+                createdAt: r.createdAt,
+                type: 'filed',
+            })),
+            reportsAgainst: reportsAgainst.map((r: any) => ({
+                _id: r._id,
+                reason: r.reason,
+                status: r.status,
+                contentType: r.contentType,
+                createdAt: r.createdAt,
+                type: 'against',
+            })),
         });
     } catch (error) {
         next(error);

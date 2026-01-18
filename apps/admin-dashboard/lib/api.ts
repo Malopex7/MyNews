@@ -144,6 +144,11 @@ export const usersAPI = {
         const { data } = await api.get(`/api/users/${id}/activity`, { params: { limit } });
         return data;
     },
+
+    getReports: async (id: string, limit?: number) => {
+        const { data } = await api.get(`/api/users/${id}/reports`, { params: { limit } });
+        return data;
+    },
 };
 
 // Admin Stats API (placeholder - will need backend implementation)

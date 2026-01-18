@@ -61,3 +61,12 @@ export interface UserActivity {
     description: string;
     createdAt: string;
 }
+
+export interface UserReport {
+    _id: string;
+    reason: ReportReason;
+    status: ReportStatus;
+    contentType: ReportContentType;
+    createdAt: string;
+    type: 'filed' | 'against';
+}

@@ -58,11 +58,11 @@ Phased development plan for the FanFlick Admin Dashboard.
   - [x] Add search by username/email
   - [x] Filter by role, status, profile type
   - [x] Implement pagination
-- [ ] Build user detail page
-  - [ ] Show user profile & metrics
-  - [ ] Display activity timeline
-  - [ ] Show reports involving user
-  - [ ] Add suspend/unsuspend button
+- [/] Build user detail page
+  - [x] Show user profile & metrics
+  - [x] Display activity timeline
+  - [x] Show reports involving user
+  - [x] Add suspend/unsuspend button
 - [ ] Test user management workflows
 
 **Deliverable:** Admins can view users and suspend/unsuspend accounts.
