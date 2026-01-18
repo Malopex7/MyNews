@@ -421,7 +421,7 @@ export const getReportAnalytics = async (
             ])
         );
 
-        // Track reason breakdown across all days
+        // Track breakdowns across all days
         const reasonCounts: Record<string, number> = {
             inappropriate: 0,
             spam: 0,
@@ -430,16 +430,32 @@ export const getReportAnalytics = async (
             other: 0,
         };
 
+        const statusCounts: Record<string, number> = {
+            pending: 0,
+            reviewed: 0,
+            dismissed: 0,
+            actioned: 0,
+        };
+
         for (let i = 0; i < days; i++) {
             const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
             const dateStr = date.toISOString().split('T')[0];
             const dayData = dataMap.get(dateStr);
 
-            // Count reasons for pie chart
+            // Count reasons
             if (dayData?.reasons) {
                 dayData.reasons.forEach((r: string) => {
                     if (reasonCounts[r] !== undefined) {
                         reasonCounts[r]++;
+                    }
+                });
+            }
+
+            // Count statuses
+            if (dayData?.statuses) {
+                dayData.statuses.forEach((s: string) => {
+                    if (statusCounts[s] !== undefined) {
+                        statusCounts[s]++;
                     }
                 });
             }
@@ -457,26 +473,111 @@ export const getReportAnalytics = async (
             });
         }
 
+        // Format for frontend
+        const byReason = Object.entries(reasonCounts).map(([key, value]) => ({
+            _id: key,
+            count: value
+        }));
+
+        const byStatus = Object.entries(statusCounts).map(([key, value]) => ({
+            _id: key,
+            count: value
+        }));
+
         // Calculate summary
         const totalReports = filledData.reduce((sum, d) => sum + d.count, 0);
-        const totalPending = filledData.reduce((sum, d) => sum + d.pending, 0);
-        const totalResolved = filledData.reduce((sum, d) => sum + d.resolved, 0);
+        const totalPending = statusCounts.pending;
+        const totalResolved = totalReports - totalPending;
 
         res.json({
             period: days,
             data: filledData,
-            reasonBreakdown: reasonCounts,
+            byReason,
+            byStatus,
             summary: {
                 totalReports,
                 totalPending,
                 totalResolved,
                 resolutionRate: totalReports > 0
-                    ? Math.round((totalResolved / totalReports) * 100)
+                    ? parseFloat((totalResolved / totalReports).toFixed(2))
                     : 0,
                 averagePerDay: days > 0 ? Math.round((totalReports / days) * 10) / 10 : 0,
             },
             generatedAt: new Date().toISOString(),
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Get recent activity across the platform
+ * GET /api/admin/activity?limit=10
+ */
+export const getRecentActivity = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        // Fetch latest users, content, and reports
+        const [latestUsers, latestMedia, latestReports] = await Promise.all([
+            User.find().sort({ createdAt: -1 }).limit(limit).lean(),
+            Media.find({ type: 'video' }).sort({ createdAt: -1 }).limit(limit).lean(),
+            Report.find().sort({ createdAt: -1 }).limit(limit).lean(),
+        ]);
+
+        // Transform into unified activity format
+        const activities: any[] = [];
+
+        latestUsers.forEach((user: any) => {
+            activities.push({
+                _id: `user_${user._id}`,
+                type: 'user_register',
+                description: `New user ${user.username || user.email} joined as a ${user.profileType}`,
+                metadata: {
+                    userId: user._id,
+                    username: user.username,
+                },
+                createdAt: user.createdAt,
+            });
+        });
+
+        latestMedia.forEach((media: any) => {
+            activities.push({
+                _id: `media_${media._id}`,
+                type: 'content_upload',
+                description: `New trailer "${media.title}" uploaded by user ${media.userId}`,
+                metadata: {
+                    contentId: media._id,
+                    userId: media.userId,
+                    contentType: media.creativeType,
+                },
+                createdAt: media.createdAt,
+            });
+        });
+
+        latestReports.forEach((report: any) => {
+            activities.push({
+                _id: `report_${report._id}`,
+                type: 'report_filed',
+                description: `New report filed: ${report.reason} for ${report.targetType}`,
+                metadata: {
+                    reportId: report._id,
+                    reason: report.reason,
+                },
+                createdAt: report.createdAt,
+            });
+        });
+
+        // Sort by date descending and limit
+        const sortedActivities = activities
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, limit);
+
+        res.json(sortedActivities);
     } catch (error) {
         next(error);
     }

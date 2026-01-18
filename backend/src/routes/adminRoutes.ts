@@ -20,4 +20,7 @@ router.get('/analytics/content', authenticate, authorize('admin'), adminControll
 // GET /api/admin/analytics/reports - Get report volume data
 router.get('/analytics/reports', authenticate, authorize('admin'), adminController.getReportAnalytics);
 
+// GET /api/admin/activity - Get recent activity
+router.get('/activity', authenticate, authorize('admin'), adminController.getRecentActivity);
+
 export default router;
