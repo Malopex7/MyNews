@@ -18,6 +18,7 @@ const navigation: NavItem[] = [
     { name: 'Users', href: '/dashboard/users', icon: Users },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Moderation', href: '/dashboard/moderation', icon: Shield },
+    { name: 'Audit Logs', href: '/dashboard/audit-logs', icon: Flag },
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -45,8 +46,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                                 key={item.name}
                                 href={item.href}
                                 className={`flex items-center px-4 py-3 rounded-lg transition-colors ${isActive
-                                        ? 'bg-primary/10 text-primary'
-                                        : 'text-text-secondary hover:bg-background-highlight hover:text-text-primary'
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-text-secondary hover:bg-background-highlight hover:text-text-primary'
                                     }`}
                             >
                                 <Icon className="w-5 h-5 mr-3" />

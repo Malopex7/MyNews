@@ -190,6 +190,11 @@ export const adminAPI = {
         const { data } = await api.get('/api/admin/content', { params });
         return data;
     },
+
+    getAuditLogs: async (params?: { page?: number; limit?: number; action?: string; targetType?: string; adminId?: string }) => {
+        const { data } = await api.get('/api/admin/audit-log', { params });
+        return data;
+    },
 };
 
 export default api;

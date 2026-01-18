@@ -115,8 +115,8 @@ Phased development plan for the FanFlick Admin Dashboard.
   - [x] Implement bulk selection
   - [x] Add bulk delete action
   - [x] Show content preview
-- [ ] Create audit log viewer
-- [ ] Add moderation action confirmations
+- [x] Create audit log viewer
+- [x] Add moderation action confirmations
 - [ ] Test moderation workflows
 
 **Deliverable:** Admins can browse and moderate all content.

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usersAPI } from '@/lib/api';
 import { User, UserActivity, UserReport } from '@/lib/types';
+import { ConfirmationModal } from '@/components/common/ConfirmationModal';
 
 export default function UserDetailPage() {
     const params = useParams();
@@ -46,11 +47,33 @@ export default function UserDetailPage() {
         }
     }, [userId]);
 
-    const handleSuspendToggle = async () => {
+    const [confirmModal, setConfirmModal] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+        isDangerous: false,
+        isLoading: false,
+    });
+
+    const openSuspendModal = () => {
+        if (!user) return;
+        setConfirmModal({
+            isOpen: true,
+            title: user.suspended ? 'Unsuspend User?' : 'Suspend User?',
+            message: user.suspended
+                ? 'Are you sure you want to reactivate this user account? They will regain access immediately.'
+                : 'Are you sure you want to suspend this user? They will lose access to their account.',
+            isDangerous: !user.suspended, // Suspension is dangerous/red
+            isLoading: false,
+        });
+    };
+
+    const confirmSuspendAction = async () => {
         if (!user) return;
 
+        setConfirmModal(prev => ({ ...prev, isLoading: true }));
+
         try {
-            setActionLoading(true);
             if (user.suspended) {
                 await usersAPI.unsuspend(userId);
                 setUser({ ...user, suspended: false });
@@ -58,11 +81,12 @@ export default function UserDetailPage() {
                 await usersAPI.suspend(userId);
                 setUser({ ...user, suspended: true });
             }
+            // Close modal after success
+            setConfirmModal(prev => ({ ...prev, isOpen: false }));
         } catch (err: any) {
             console.error('Failed to update user status:', err);
             alert(err.response?.data?.message || 'Failed to update user status');
-        } finally {
-            setActionLoading(false);
+            setConfirmModal(prev => ({ ...prev, isLoading: false }));
         }
     };
 
@@ -122,6 +146,16 @@ export default function UserDetailPage() {
 
     return (
         <div className="p-8">
+            <ConfirmationModal
+                isOpen={confirmModal.isOpen}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                isDangerous={confirmModal.isDangerous}
+                isLoading={confirmModal.isLoading}
+                onConfirm={confirmSuspendAction}
+                onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+            />
+
             <div className="max-w-4xl mx-auto">
                 {/* Back Link */}
                 <Link href="/dashboard/users" className="text-gold-500 hover:text-gold-400 mb-6 inline-flex items-center gap-1">
@@ -180,14 +214,13 @@ export default function UserDetailPage() {
 
                         {/* Actions */}
                         <button
-                            onClick={handleSuspendToggle}
-                            disabled={actionLoading}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 ${user.suspended
+                            onClick={openSuspendModal}
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${user.suspended
                                 ? 'bg-green-600 hover:bg-green-700 text-white'
                                 : 'bg-red-600 hover:bg-red-700 text-white'
                                 }`}
                         >
-                            {actionLoading ? 'Processing...' : user.suspended ? 'Unsuspend User' : 'Suspend User'}
+                            {user.suspended ? 'Unsuspend User' : 'Suspend User'}
                         </button>
                     </div>
 
@@ -274,8 +307,8 @@ export default function UserDetailPage() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className={`px-2 py-0.5 text-xs rounded-full capitalize ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                    report.status === 'actioned' ? 'bg-green-100 text-green-800' :
-                                                        'bg-gray-100 text-gray-800'
+                                                report.status === 'actioned' ? 'bg-green-100 text-green-800' :
+                                                    'bg-gray-100 text-gray-800'
                                                 }`}>
                                                 {report.status}
                                             </span>
@@ -306,8 +339,8 @@ export default function UserDetailPage() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <span className={`px-2 py-0.5 text-xs rounded-full capitalize ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                    report.status === 'actioned' ? 'bg-green-100 text-green-800' :
-                                                        'bg-gray-100 text-gray-800'
+                                                report.status === 'actioned' ? 'bg-green-100 text-green-800' :
+                                                    'bg-gray-100 text-gray-800'
                                                 }`}>
                                                 {report.status}
                                             </span>
