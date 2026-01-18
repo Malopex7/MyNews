@@ -6,6 +6,7 @@ export interface User {
     profileType: string;
     avatar?: string;
     handle?: string;
+    suspended?: boolean;
 }
 
 export type ReportStatus = 'pending' | 'reviewed' | 'dismissed' | 'actioned';
@@ -33,4 +34,10 @@ export interface PaginatedResponse<T> {
     page: number;
     limit: number;
     totalPages: number;
+}
+
+export interface UserActivity {
+    type: 'upload' | 'comment' | 'report';
+    description: string;
+    createdAt: string;
 }

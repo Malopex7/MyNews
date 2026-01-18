@@ -49,15 +49,15 @@ Phased development plan for the FanFlick Admin Dashboard.
 - [x] Create user suspend/unsuspend endpoints
   - [x] `POST /api/users/:id/suspend`
   - [x] `POST /api/users/:id/unsuspend`
-- [ ] Update User model with `suspended` field
-- [ ] Add user activity endpoint
+- [x] Update User model with `suspended` field
+- [x] Add user activity endpoint
 
 ### Frontend
 - [ ] Build users list page
-  - [ ] Display users in table
-  - [ ] Add search by username/email
-  - [ ] Filter by role, status, profile type
-  - [ ] Implement pagination
+  - [x] Display users in table
+  - [x] Add search by username/email
+  - [x] Filter by role, status, profile type
+  - [x] Implement pagination
 - [ ] Build user detail page
   - [ ] Show user profile & metrics
   - [ ] Display activity timeline

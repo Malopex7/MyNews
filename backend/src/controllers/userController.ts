@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services';
 import { UpdateUserSchema } from '@packages/schemas';
 import mongoose from 'mongoose';
-import { Media, User } from '../models';
+import { Media, User, Comment, Report } from '../models';
 
 // Helper to format user response
 const formatUserResponse = (user: any, includePrivate: boolean = true) => {
@@ -82,8 +82,28 @@ export const getAll = async (
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 20;
+        const search = req.query.search as string | undefined;
 
-        const { users, total, totalPages } = await userService.findAll(page, limit);
+        // Build filters object
+        const filters: { role?: string; suspended?: boolean; profileType?: string } = {};
+        if (req.query.role) {
+            filters.role = req.query.role as string;
+        }
+        if (req.query.status === 'suspended') {
+            filters.suspended = true;
+        } else if (req.query.status === 'active') {
+            filters.suspended = false;
+        }
+        if (req.query.profileType) {
+            filters.profileType = req.query.profileType as string;
+        }
+
+        const { users, total, totalPages } = await userService.findAll(
+            page,
+            limit,
+            search,
+            Object.keys(filters).length > 0 ? filters : undefined
+        );
 
         res.json({
             items: users.map((user) => formatUserResponse(user, false)),
@@ -509,6 +529,92 @@ export const registerPushToken = async (
         }
 
         res.json({ success: true, message: 'Push token registered successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ============================================
+// User Activity (Admin)
+// ============================================
+
+export const getUserActivity = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            res.status(400).json({ message: 'Invalid user ID format' });
+            return;
+        }
+
+        const userId = new mongoose.Types.ObjectId(id);
+
+        // Fetch recent uploads
+        const uploads = await Media.find({ uploadedBy: userId, type: 'video' })
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .select('title createdAt')
+            .lean();
+
+        // Fetch recent comments
+        const comments = await Comment.find({ userId })
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .select('text type createdAt')
+            .lean();
+
+        // Fetch recent reports filed by user
+        const reports = await Report.find({ reportedBy: userId })
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .select('reason status createdAt')
+            .lean();
+
+        // Combine and format
+        const activity: Array<{
+            type: 'upload' | 'comment' | 'report';
+            description: string;
+            createdAt: Date;
+        }> = [];
+
+        uploads.forEach((u: any) => {
+            activity.push({
+                type: 'upload',
+                description: `Uploaded "${u.title}"`,
+                createdAt: u.createdAt,
+            });
+        });
+
+        comments.forEach((c: any) => {
+            activity.push({
+                type: 'comment',
+                description: `Posted a ${c.type} comment`,
+                createdAt: c.createdAt,
+            });
+        });
+
+        reports.forEach((r: any) => {
+            activity.push({
+                type: 'report',
+                description: `Filed a ${r.reason} report (${r.status})`,
+                createdAt: r.createdAt,
+            });
+        });
+
+        // Sort by date descending and limit
+        activity.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const limitedActivity = activity.slice(0, limit);
+
+        res.json({
+            items: limitedActivity,
+            total: limitedActivity.length,
+        });
     } catch (error) {
         next(error);
     }

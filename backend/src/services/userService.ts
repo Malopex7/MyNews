@@ -19,13 +19,55 @@ export const findByUsername = async (username: string): Promise<IUser | null> =>
 
 export const findAll = async (
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
+    search?: string,
+    filters?: { role?: string; suspended?: boolean; profileType?: string }
 ): Promise<{ users: IUser[]; total: number; totalPages: number }> => {
     const skip = (page - 1) * limit;
 
+    // Build query conditions
+    const conditions: Record<string, any>[] = [];
+
+    // Search condition
+    if (search && search.trim()) {
+        const searchRegex = new RegExp(search.trim(), 'i');
+        conditions.push({
+            $or: [
+                { name: searchRegex },
+                { email: searchRegex },
+                { username: searchRegex },
+            ]
+        });
+    }
+
+    // Apply filters
+    if (filters) {
+        if (filters.role) {
+            conditions.push({ role: filters.role });
+        }
+        if (filters.suspended === true) {
+            conditions.push({ suspended: true });
+        } else if (filters.suspended === false) {
+            // Active users: suspended is false, doesn't exist, or is null
+            conditions.push({
+                $or: [
+                    { suspended: false },
+                    { suspended: { $exists: false } },
+                    { suspended: null }
+                ]
+            });
+        }
+        if (filters.profileType) {
+            conditions.push({ profileType: filters.profileType });
+        }
+    }
+
+    // Build final query
+    const query = conditions.length > 0 ? { $and: conditions } : {};
+
     const [users, total] = await Promise.all([
-        User.find().skip(skip).limit(limit),
-        User.countDocuments(),
+        User.find(query).skip(skip).limit(limit),
+        User.countDocuments(query),
     ]);
 
     return {

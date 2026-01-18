@@ -113,7 +113,14 @@ export const mediaAPI = {
 
 // Users API
 export const usersAPI = {
-    getAll: async (params?: { page?: number; limit?: number; search?: string }) => {
+    getAll: async (params?: {
+        page?: number;
+        limit?: number;
+        search?: string;
+        role?: string;
+        status?: string;
+        profileType?: string;
+    }) => {
         const { data } = await api.get('/api/users', { params });
         return data;
     },
@@ -130,6 +137,11 @@ export const usersAPI = {
 
     unsuspend: async (id: string) => {
         const { data } = await api.post(`/api/users/${id}/unsuspend`);
+        return data;
+    },
+
+    getActivity: async (id: string, limit?: number) => {
+        const { data } = await api.get(`/api/users/${id}/activity`, { params: { limit } });
         return data;
     },
 };

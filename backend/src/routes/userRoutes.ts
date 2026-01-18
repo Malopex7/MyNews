@@ -82,4 +82,7 @@ router.post('/:id/suspend', authenticate, authorize('admin'), userController.sus
 // POST /api/users/:id/unsuspend - Unsuspend user (admin only)
 router.post('/:id/unsuspend', authenticate, authorize('admin'), userController.unsuspendUser);
 
+// GET /api/users/:id/activity - Get user activity (admin only)
+router.get('/:id/activity', authenticate, authorize('admin'), userController.getUserActivity);
+
 export default router;
