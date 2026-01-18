@@ -81,12 +81,12 @@ Phased development plan for the FanFlick Admin Dashboard.
   - [x] `GET /api/admin/analytics/reports` - Report volume
 
 ### Frontend
-- [ ] Build dashboard home page
-  - [ ] Add metrics cards (users, content, reports)
-  - [ ] Create user growth chart (line)
-  - [ ] Create content creation chart (bar)
-  - [ ] Create report volume chart (pie)
-  - [ ] Add recent activity feed
+- [/] Build dashboard home page
+  - [x] Add metrics cards (users, content, reports)
+  - [x] Create user growth chart (line)
+  - [x] Create content creation chart (bar)
+  - [x] Create report volume chart (pie)
+  - [x] Add recent activity feed
 - [ ] Integrate Recharts library
 - [ ] Style charts with FanFlick theme
 - [ ] Test analytics display

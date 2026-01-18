@@ -70,3 +70,125 @@ export interface UserReport {
     createdAt: string;
     type: 'filed' | 'against';
 }
+
+export interface AdminStats {
+    users: {
+        total: number;
+        creators: number;
+        viewers: number;
+        suspended: number;
+        newToday: number;
+        newThisWeek: number;
+        newThisMonth: number;
+    };
+    content: {
+        total: number;
+        newThisWeek: number;
+        newThisMonth: number;
+        totalViews: number;
+        totalLikes: number;
+        totalShares: number;
+    };
+    reports: {
+        total: number;
+        pending: number;
+        reviewed: number;
+        actioned: number;
+        newThisWeek: number;
+    };
+    engagement: {
+        totalComments: number;
+        avgViewsPerContent: number;
+        avgLikesPerContent: number;
+    };
+    generatedAt: string;
+}
+
+export interface UserAnalyticsDataPoint {
+    date: string;
+    count: number;
+    creators: number;
+    viewers: number;
+}
+
+export interface UserAnalytics {
+    period: number;
+    data: UserAnalyticsDataPoint[];
+    summary: {
+        totalNewUsers: number;
+        totalNewCreators: number;
+        totalNewViewers: number;
+        averagePerDay: number;
+    };
+    generatedAt: string;
+}
+
+export interface ContentAnalyticsDataPoint {
+    date: string;
+    count: number;
+    views: number;
+    likes: number;
+    original: number;
+    parody: number;
+    remix: number;
+    response: number;
+}
+
+export interface ContentAnalytics {
+    period: number;
+    data: ContentAnalyticsDataPoint[];
+    summary: {
+        totalContent: number;
+        totalViews: number;
+        totalLikes: number;
+        averagePerDay: number;
+    };
+    generatedAt: string;
+}
+
+export interface ReportAnalyticsDataPoint {
+    date: string;
+    count: number;
+    pending: number;
+    resolved: number;
+}
+
+export interface ReportReasonStat {
+    _id: ReportReason;
+    count: number;
+}
+
+export interface ReportStatusStat {
+    _id: ReportStatus;
+    count: number;
+}
+
+export interface ReportAnalytics {
+    period: number;
+    data: ReportAnalyticsDataPoint[];
+    byReason: ReportReasonStat[];
+    byStatus: ReportStatusStat[];
+    summary: {
+        totalReports: number;
+        totalPending: number;
+        totalResolved: number;
+        resolutionRate: number;
+        averagePerDay: number;
+    };
+    generatedAt: string;
+}
+
+export interface DashboardActivity {
+    _id: string;
+    type: 'user_register' | 'content_upload' | 'report_filed';
+    description: string;
+    metadata?: {
+        userId?: string;
+        username?: string;
+        contentId?: string;
+        contentType?: string;
+        reportId?: string;
+        reason?: string;
+    };
+    createdAt: string;
+}

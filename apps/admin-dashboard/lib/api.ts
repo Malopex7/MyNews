@@ -172,6 +172,11 @@ export const adminAPI = {
         const { data } = await api.get('/api/admin/analytics/reports', { params: { period } });
         return data;
     },
+
+    getRecentActivity: async (limit = 10) => {
+        const { data } = await api.get('/api/admin/activity', { params: { limit } });
+        return data;
+    },
 };
 
 export default api;
