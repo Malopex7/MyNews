@@ -1,5 +1,21 @@
+export interface UserProfile {
+    displayName?: string;
+    bio?: string;
+    avatarUrl?: string;
+    creativeFocus?: string[];
+    website?: string;
+}
+
+export interface UserMetrics {
+    followersCount: number;
+    followingCount: number;
+    totalLikesReceived: number;
+}
+
 export interface User {
     _id: string;
+    id?: string;
+    username?: string;
     name: string;
     email: string;
     role: string;
@@ -7,6 +23,10 @@ export interface User {
     avatar?: string;
     handle?: string;
     suspended?: boolean;
+    profile?: UserProfile;
+    metrics?: UserMetrics;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type ReportStatus = 'pending' | 'reviewed' | 'dismissed' | 'actioned';
