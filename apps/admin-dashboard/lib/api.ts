@@ -115,13 +115,13 @@ export const usersAPI = {
         return data;
     },
 
-    suspend: async (id: string, reason: string) => {
-        const { data } = await api.patch(`/api/users/${id}/suspend`, { reason });
+    suspend: async (id: string) => {
+        const { data } = await api.post(`/api/users/${id}/suspend`);
         return data;
     },
 
     unsuspend: async (id: string) => {
-        const { data } = await api.patch(`/api/users/${id}/unsuspend`);
+        const { data } = await api.post(`/api/users/${id}/unsuspend`);
         return data;
     },
 };

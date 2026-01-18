@@ -33,6 +33,7 @@ export interface IUser extends Document {
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
+    suspended: boolean;
 }
 
 // Profile sub-schema
@@ -141,6 +142,10 @@ const UserSchema = new Schema<IUser>(
         watchlist: {
             type: [{ type: Schema.Types.ObjectId, ref: 'Media' }],
             default: [],
+        },
+        suspended: {
+            type: Boolean,
+            default: false,
         },
         refreshToken: {
             type: String,

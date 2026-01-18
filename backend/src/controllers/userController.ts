@@ -154,6 +154,44 @@ export const remove = async (
     }
 };
 
+export const suspendUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const user = await userService.update(req.params.id, { suspended: true } as any);
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.json(formatUserResponse(user, true));
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const unsuspendUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const user = await userService.update(req.params.id, { suspended: false } as any);
+
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        res.json(formatUserResponse(user, true));
+    } catch (error) {
+        next(error);
+    }
+};
+
 // ============================================
 // Public Profile
 // ============================================

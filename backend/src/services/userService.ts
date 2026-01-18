@@ -52,6 +52,7 @@ export const update = async (
     // Handle top-level fields
     if (data.name) updateData.name = data.name;
     if (data.profileType) updateData.profileType = data.profileType;
+    if ((data as any).suspended !== undefined) updateData.suspended = (data as any).suspended;
 
     // Handle nested profile fields using dot notation
     if (data.profile) {

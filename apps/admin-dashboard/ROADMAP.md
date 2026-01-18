@@ -46,7 +46,7 @@ Phased development plan for the FanFlick Admin Dashboard.
 **Goal:** Enable admin oversight of user accounts.
 
 ### Backend Requirements
-- [ ] Create user suspend/unsuspend endpoints
+- [x] Create user suspend/unsuspend endpoints
   - [ ] `PATCH /api/users/:id/suspend`
   - [ ] `PATCH /api/users/:id/unsuspend`
 - [ ] Update User model with `suspended` field

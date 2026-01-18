@@ -76,4 +76,10 @@ router.get('/:id', authenticate, authorize('admin'), userController.getById);
 // DELETE /api/users/:id - Delete user (admin only)
 router.delete('/:id', authenticate, authorize('admin'), userController.remove);
 
+// POST /api/users/:id/suspend - Suspend user (admin only)
+router.post('/:id/suspend', authenticate, authorize('admin'), userController.suspendUser);
+
+// POST /api/users/:id/unsuspend - Unsuspend user (admin only)
+router.post('/:id/unsuspend', authenticate, authorize('admin'), userController.unsuspendUser);
+
 export default router;
