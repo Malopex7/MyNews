@@ -111,6 +111,14 @@ export const mediaAPI = {
     }
 };
 
+// Comments API
+export const commentsAPI = {
+    delete: async (id: string) => {
+        const { data } = await api.delete(`/api/comments/${id}`);
+        return data;
+    }
+};
+
 // Users API
 export const usersAPI = {
     getAll: async (params?: {
@@ -175,6 +183,11 @@ export const adminAPI = {
 
     getRecentActivity: async (limit = 10) => {
         const { data } = await api.get('/api/admin/activity', { params: { limit } });
+        return data;
+    },
+
+    getContent: async (params?: { page?: number; limit?: number; type?: string; sort?: string; search?: string }) => {
+        const { data } = await api.get('/api/admin/content', { params });
         return data;
     },
 };

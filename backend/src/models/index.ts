@@ -14,3 +14,5 @@ export { Notification } from './Notification';
 export type { INotification, NotificationType } from './Notification';
 export { Report } from './Report';
 export type { IReport } from './Report';
+export { AuditLog } from './AuditLog';
+export type { IAuditLog } from './AuditLog';

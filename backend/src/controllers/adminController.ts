@@ -718,3 +718,79 @@ export const getContent = async (
         next(error);
     }
 };
+
+// Import AuditLog (assuming it's exported from models)
+import { AuditLog } from '../models';
+
+/**
+ * Create an audit log entry
+ * POST /api/admin/audit-log
+ */
+export const createAuditLog = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const { action, targetType, targetId, details } = req.body;
+        const adminId = (req as any).user.userId;
+
+        const auditLog = await AuditLog.create({
+            adminId,
+            action,
+            targetType,
+            targetId,
+            details,
+            ipAddress: req.ip,
+            userAgent: req.get('user-agent'),
+        });
+
+        res.status(201).json(auditLog);
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Get audit logs
+ * GET /api/admin/audit-log
+ */
+export const getAuditLogs = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+        const action = req.query.action as string;
+        const targetType = req.query.targetType as string;
+        const adminId = req.query.adminId as string;
+
+        const skip = (page - 1) * limit;
+
+        const query: any = {};
+        if (action) query.action = action;
+        if (targetType) query.targetType = targetType;
+        if (adminId) query.adminId = adminId;
+
+        const [logs, total] = await Promise.all([
+            AuditLog.find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('adminId', 'name email')
+                .lean(),
+            AuditLog.countDocuments(query),
+        ]);
+
+        res.json({
+            items: logs,
+            total,
+            page,
+            limit,
+        });
+    } catch (error) {
+        next(error);
+    }
+};

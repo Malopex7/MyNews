@@ -26,4 +26,8 @@ router.get('/activity', authenticate, authorize('admin'), adminController.getRec
 // GET /api/admin/content - Get all content for moderation
 router.get('/content', authenticate, authorize('admin'), adminController.getContent);
 
+// Audit Logs
+router.post('/audit-log', authenticate, authorize('admin'), adminController.createAuditLog);
+router.get('/audit-log', authenticate, authorize('admin'), adminController.getAuditLogs);
+
 export default router;
