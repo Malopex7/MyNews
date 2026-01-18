@@ -119,8 +119,9 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        // Check ownership
-        if (comment.userId.toString() !== userId.toString()) {
+        // Check ownership or admin role
+        const isAdmin = (req as any).user?.role === 'admin';
+        if (comment.userId.toString() !== userId.toString() && !isAdmin) {
             return res.status(403).json({ message: 'You can only delete your own comments' });
         }
 

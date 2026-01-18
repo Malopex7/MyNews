@@ -23,4 +23,7 @@ router.get('/analytics/reports', authenticate, authorize('admin'), adminControll
 // GET /api/admin/activity - Get recent activity
 router.get('/activity', authenticate, authorize('admin'), adminController.getRecentActivity);
 
+// GET /api/admin/content - Get all content for moderation
+router.get('/content', authenticate, authorize('admin'), adminController.getContent);
+
 export default router;

@@ -582,3 +582,139 @@ export const getRecentActivity = async (
         next(error);
     }
 };
+
+/**
+ * Get moderateable content (trailers and comments)
+ * GET /api/admin/content
+ */
+export const getContent = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+        const type = (req.query.type as string) || 'all'; // 'video', 'comment', 'all'
+        const sort = (req.query.sort as string) || 'newest'; // 'newest', 'oldest', 'reported'
+        const search = req.query.search as string;
+
+        const skip = (page - 1) * limit;
+        const items: any[] = [];
+        let total = 0;
+
+        // Build sort object
+        const sortOptions: any = {};
+        if (sort === 'oldest') {
+            sortOptions.createdAt = 1;
+        } else {
+            sortOptions.createdAt = -1;
+        }
+
+        // Parallel fetching based on type
+        const promises = [];
+
+        // 1. Fetch Media (Videos)
+        if (type === 'all' || type === 'video') {
+            const mediaQuery: any = { type: 'video' };
+
+            if (search) {
+                mediaQuery.$or = [
+                    { title: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } }
+                ];
+            }
+
+            promises.push(
+                Media.find(mediaQuery)
+                    .sort(sortOptions)
+                    .limit(limit)
+                    .skip(skip) // Note: This simple skip/limit logic is imperfect for mixed types if paginating combined results
+                    .populate('uploadedBy', 'name email profile.avatar')
+                    .lean()
+                    .then(media => media.map(m => ({
+                        ...m,
+                        entityType: 'video',
+                        author: m.uploadedBy,
+                        content: m.description, // Unified field for display
+                    })))
+            );
+
+            if (type === 'video') {
+                promises.push(Media.countDocuments(mediaQuery));
+            }
+        }
+
+        // 2. Fetch Comments
+        if (type === 'all' || type === 'comment') {
+            const commentQuery: any = {};
+
+            if (search) {
+                commentQuery.text = { $regex: search, $options: 'i' };
+            }
+
+            promises.push(
+                Comment.find(commentQuery)
+                    .sort(sortOptions)
+                    .limit(limit)
+                    .skip(skip)
+                    .populate('userId', 'name email profile.avatar')
+                    .populate('mediaId', 'title')
+                    .lean()
+                    .then(comments => comments.map(c => ({
+                        ...c,
+                        entityType: 'comment',
+                        author: c.userId,
+                        content: c.text,
+                        title: `Comment on "${(c as any).mediaId?.title || 'Video'}"`,
+                    })))
+            );
+
+            if (type === 'comment') {
+                promises.push(Comment.countDocuments(commentQuery));
+            }
+        }
+
+        const results = await Promise.all(promises);
+
+        // Process results
+        if (type === 'video') {
+            items.push(...results[0]);
+            total = results[1] as number;
+        } else if (type === 'comment') {
+            items.push(...results[0]);
+            total = results[1] as number;
+        } else {
+            // 'all' case - combine and sort manually (simplified)
+            // Ideally we'd run a proper aggregation, but for now we'll fetch limit from both and merge
+            // This is a naive implementation for 'all' that assumes roughly equal distribution or just shows mix
+            const videos = results[0] as any[];
+            const comments = results[1] as any[];
+
+            // Allow searching "all" to be effectively "top X of each" merged
+            items.push(...videos, ...comments);
+            items.sort((a, b) => {
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
+                return sort === 'oldest' ? dateA - dateB : dateB - dateA;
+            });
+
+            // Slice to page limit after merge
+            if (items.length > limit) items.length = limit;
+
+            // Total is approx sum (not accurate for pagination across collections without substantial changes)
+            // For now, let's just count fetched items as total for infinite scroll behavior or similiar
+            total = items.length;
+        }
+
+        res.json({
+            items,
+            total,
+            page,
+            limit
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
