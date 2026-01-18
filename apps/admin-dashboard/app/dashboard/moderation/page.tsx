@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, Filter, RefreshCw, AlertTriangle } from 'lucide-react';
 import { adminAPI, mediaAPI, commentsAPI } from '@/lib/api';
 import { ContentItem } from '@/components/moderation/ContentItem';
+import { ConfirmationModal } from '@/components/common/ConfirmationModal';
 
 export default function ModerationPage() {
     const [items, setItems] = useState<any[]>([]);
@@ -52,26 +53,65 @@ export default function ModerationPage() {
         }
     };
 
-    const handleDelete = async (id: string, entityType: 'video' | 'comment') => {
-        if (!confirm('Are you sure you want to delete this content? This action cannot be undone.')) return;
+    // Modal state
+    const [deleteModal, setDeleteModal] = useState<{
+        isOpen: boolean;
+        itemId: string;
+        itemType: 'video' | 'comment';
+        isLoading: boolean;
+    }>({
+        isOpen: false,
+        itemId: '',
+        itemType: 'video',
+        isLoading: false
+    });
+
+    const confirmDelete = (id: string, entityType: 'video' | 'comment') => {
+        setDeleteModal({
+            isOpen: true,
+            itemId: id,
+            itemType: entityType,
+            isLoading: false
+        });
+    };
+
+    const handleDeletePerform = async () => {
+        const { itemId, itemType } = deleteModal;
+        if (!itemId) return;
+
+        setDeleteModal(prev => ({ ...prev, isLoading: true }));
 
         try {
-            if (entityType === 'video') {
-                await mediaAPI.delete(id);
+            if (itemType === 'video') {
+                await mediaAPI.delete(itemId);
             } else {
-                await commentsAPI.delete(id);
+                await commentsAPI.delete(itemId);
             }
 
             // Refresh list
             fetchContent();
+            setDeleteModal({ isOpen: false, itemId: '', itemType: 'video', isLoading: false });
         } catch (err) {
             alert('Failed to delete content');
             console.error(err);
+            setDeleteModal(prev => ({ ...prev, isLoading: false }));
         }
     };
 
+
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-6">
+            <ConfirmationModal
+                isOpen={deleteModal.isOpen}
+                title="Delete Content"
+                message="Are you sure you want to delete this content? This action cannot be undone."
+                confirmLabel="Delete"
+                isDangerous={true}
+                isLoading={deleteModal.isLoading}
+                onConfirm={handleDeletePerform}
+                onCancel={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+            />
+
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-text-primary">Content Moderation</h1>
@@ -93,8 +133,8 @@ export default function ModerationPage() {
                             key={t}
                             onClick={() => { setType(t); setPage(1); }}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${type === t
-                                    ? 'bg-background-highlight text-text-primary shadow-sm'
-                                    : 'text-text-muted hover:text-text-primary'
+                                ? 'bg-background-highlight text-text-primary shadow-sm'
+                                : 'text-text-muted hover:text-text-primary'
                                 }`}
                         >
                             {t.charAt(0).toUpperCase() + t.slice(1)}s
@@ -136,7 +176,7 @@ export default function ModerationPage() {
                         <ContentItem
                             key={item._id}
                             item={item}
-                            onDelete={handleDelete}
+                            onDelete={confirmDelete}
                         />
                     ))}
                 </div>
