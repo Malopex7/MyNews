@@ -6,6 +6,7 @@ import pollRoutes from './pollRoutes';
 import commentRoutes from './commentRoutes';
 import notificationRoutes from './notificationRoutes';
 import reportRoutes from './reportRoutes';
+import adminRoutes from './adminRoutes';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use('/polls', pollRoutes);
 router.use('/comments', commentRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/reports', reportRoutes);
+router.use('/admin', adminRoutes);
 
 export default router;
 
