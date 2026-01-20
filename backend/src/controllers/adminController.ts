@@ -611,49 +611,69 @@ export const getContent = async (
             sortOptions.createdAt = -1;
         }
 
-        // Parallel fetching based on type
-        const promises = [];
+        // Build query objects upfront
+        const mediaQuery: any = { type: 'video' };
+        const commentQuery: any = {};
 
-        // 1. Fetch Media (Videos)
-        if (type === 'all' || type === 'video') {
-            const mediaQuery: any = { type: 'video' };
+        if (search) {
+            mediaQuery.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } }
+            ];
+            commentQuery.text = { $regex: search, $options: 'i' };
+        }
 
-            if (search) {
-                mediaQuery.$or = [
-                    { title: { $regex: search, $options: 'i' } },
-                    { description: { $regex: search, $options: 'i' } }
-                ];
-            }
-
-            promises.push(
+        // Process based on type
+        if (type === 'video') {
+            const [mediaResults, mediaCount] = await Promise.all([
                 Media.find(mediaQuery)
                     .sort(sortOptions)
                     .limit(limit)
-                    .skip(skip) // Note: This simple skip/limit logic is imperfect for mixed types if paginating combined results
+                    .skip(skip)
                     .populate('uploadedBy', 'name email profile.avatar')
-                    .lean()
-                    .then(media => media.map(m => ({
-                        ...m,
-                        entityType: 'video',
-                        author: m.uploadedBy,
-                        content: m.description, // Unified field for display
-                    })))
-            );
+                    .lean(),
+                Media.countDocuments(mediaQuery)
+            ]);
 
-            if (type === 'video') {
-                promises.push(Media.countDocuments(mediaQuery));
-            }
-        }
+            items.push(...mediaResults.map(m => ({
+                ...m,
+                entityType: 'video',
+                author: m.uploadedBy,
+                content: m.description,
+            })));
+            total = mediaCount;
 
-        // 2. Fetch Comments
-        if (type === 'all' || type === 'comment') {
-            const commentQuery: any = {};
+        } else if (type === 'comment') {
+            const [commentResults, commentCount] = await Promise.all([
+                Comment.find(commentQuery)
+                    .sort(sortOptions)
+                    .limit(limit)
+                    .skip(skip)
+                    .populate('userId', 'name email profile.avatar')
+                    .populate('mediaId', 'title')
+                    .lean(),
+                Comment.countDocuments(commentQuery)
+            ]);
 
-            if (search) {
-                commentQuery.text = { $regex: search, $options: 'i' };
-            }
+            items.push(...commentResults.map(c => ({
+                ...c,
+                entityType: 'comment',
+                author: c.userId,
+                content: c.text,
+                title: `Comment on "${(c as any).mediaId?.title || 'Video'}"`,
+            })));
+            total = commentCount;
 
-            promises.push(
+        } else {
+            // 'all' case - combine and sort manually (simplified)
+            // Fetch from both collections and merge
+            const [mediaResults, commentResults] = await Promise.all([
+                Media.find(mediaQuery)
+                    .sort(sortOptions)
+                    .limit(limit)
+                    .skip(skip)
+                    .populate('uploadedBy', 'name email profile.avatar')
+                    .lean(),
                 Comment.find(commentQuery)
                     .sort(sortOptions)
                     .limit(limit)
@@ -661,37 +681,24 @@ export const getContent = async (
                     .populate('userId', 'name email profile.avatar')
                     .populate('mediaId', 'title')
                     .lean()
-                    .then(comments => comments.map(c => ({
-                        ...c,
-                        entityType: 'comment',
-                        author: c.userId,
-                        content: c.text,
-                        title: `Comment on "${(c as any).mediaId?.title || 'Video'}"`,
-                    })))
-            );
+            ]);
 
-            if (type === 'comment') {
-                promises.push(Comment.countDocuments(commentQuery));
-            }
-        }
+            const videos = mediaResults.map(m => ({
+                ...m,
+                entityType: 'video',
+                author: m.uploadedBy,
+                content: m.description,
+            }));
 
-        const results = await Promise.all(promises);
+            const comments = commentResults.map(c => ({
+                ...c,
+                entityType: 'comment',
+                author: c.userId,
+                content: c.text,
+                title: `Comment on "${(c as any).mediaId?.title || 'Video'}"`,
+            }));
 
-        // Process results
-        if (type === 'video') {
-            items.push(...results[0]);
-            total = results[1] as number;
-        } else if (type === 'comment') {
-            items.push(...results[0]);
-            total = results[1] as number;
-        } else {
-            // 'all' case - combine and sort manually (simplified)
-            // Ideally we'd run a proper aggregation, but for now we'll fetch limit from both and merge
-            // This is a naive implementation for 'all' that assumes roughly equal distribution or just shows mix
-            const videos = results[0] as any[];
-            const comments = results[1] as any[];
-
-            // Allow searching "all" to be effectively "top X of each" merged
+            // Merge and sort
             items.push(...videos, ...comments);
             items.sort((a, b) => {
                 const dateA = new Date(a.createdAt).getTime();
@@ -702,8 +709,7 @@ export const getContent = async (
             // Slice to page limit after merge
             if (items.length > limit) items.length = limit;
 
-            // Total is approx sum (not accurate for pagination across collections without substantial changes)
-            // For now, let's just count fetched items as total for infinite scroll behavior or similiar
+            // Total is approx sum (not accurate for pagination across collections)
             total = items.length;
         }
 
