@@ -3,13 +3,17 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { reportsAPI, mediaAPI, usersAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
+import { useToast } from '@/contexts/ToastContext';
 import { Report, ReportStatus, User } from '@/lib/types';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 import { ArrowLeft, User as UserIcon, Calendar, MessageSquare, Video, ShieldAlert, CheckCircle, XCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ReportDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const { showToast } = useToast();
     const id = params?.id as string;
 
     const [report, setReport] = useState<Report | null>(null);
@@ -35,16 +39,7 @@ export default function ReportDetailPage() {
                 }
             } catch (err: any) {
                 console.error('Failed to fetch report:', err);
-                const status = err.response?.status;
-                const message = err.response?.data?.message || err.message;
-
-                if (status === 403) {
-                    setError('Access denied. You do not have admin permissions.');
-                } else if (status === 401) {
-                    setError('Session expired. Please log in again.');
-                } else {
-                    setError(`Failed to load report: ${message}`);
-                }
+                setError(getErrorMessage(err));
             } finally {
                 setIsLoading(false);
             }
@@ -65,10 +60,10 @@ export default function ReportDetailPage() {
 
             // Optimistic update or refetch
             setReport(prev => prev ? { ...prev, status: newStatus, reviewNotes: notes } : null);
-            // Optionally show toast
+            showToast('success', 'Report status updated successfully');
         } catch (err: any) {
             console.error('Failed to update report:', err);
-            alert('Failed to update status. Please try again.');
+            showToast('error', getErrorMessage(err));
         } finally {
             setIsUpdating(false);
         }
@@ -78,7 +73,6 @@ export default function ReportDetailPage() {
 
     const handleAction = async (action: 'delete' | 'suspend' | 'mark') => {
         if (!report) return;
-        if (!confirm('Are you sure you want to proceed with this action? This cannot be undone.')) return;
 
         try {
             setIsUpdating(true);
@@ -120,10 +114,11 @@ export default function ReportDetailPage() {
             const updatedReport = await reportsAPI.getById(report._id);
             setReport(updatedReport);
             setShowActionModal(false);
+            showToast('success', `Action '${action}' completed successfully`);
 
         } catch (err: any) {
             console.error('Action failed:', err);
-            alert(`Action failed: ${err.response?.data?.message || err.message}`);
+            showToast('error', getErrorMessage(err));
         } finally {
             setIsUpdating(false);
         }
@@ -147,11 +142,10 @@ export default function ReportDetailPage() {
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Reports
                 </Link>
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-8 rounded-lg text-center">
-                    <ShieldAlert className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <h3 className="text-lg font-bold mb-2">Error Loading Report</h3>
-                    <p>{error || 'Report not found'}</p>
-                </div>
+                <ErrorDisplay
+                    title="Error Loading Report"
+                    message={error || 'Report not found'}
+                />
             </div>
         );
     }

@@ -1,15 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usersAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
+import { useToast } from '@/contexts/ToastContext';
 import { User, UserActivity, UserReport } from '@/lib/types';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 
 export default function UserDetailPage() {
     const params = useParams();
     const router = useRouter();
+    const { showToast } = useToast();
     const userId = params.id as string;
 
     const [user, setUser] = useState<User | null>(null);
@@ -36,7 +40,7 @@ export default function UserDetailPage() {
                 setError(null);
             } catch (err: any) {
                 console.error('Failed to fetch user:', err);
-                setError(err.response?.data?.message || 'Failed to load user');
+                setError(getErrorMessage(err));
             } finally {
                 setIsLoading(false);
             }
@@ -81,11 +85,11 @@ export default function UserDetailPage() {
                 await usersAPI.suspend(userId);
                 setUser({ ...user, suspended: true });
             }
-            // Close modal after success
+            showToast('success', user.suspended ? 'User unsuspended successfully' : 'User suspended successfully');
             setConfirmModal(prev => ({ ...prev, isOpen: false }));
         } catch (err: any) {
             console.error('Failed to update user status:', err);
-            alert(err.response?.data?.message || 'Failed to update user status');
+            showToast('error', getErrorMessage(err));
             setConfirmModal(prev => ({ ...prev, isLoading: false }));
         }
     };
@@ -133,12 +137,17 @@ export default function UserDetailPage() {
         return (
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                        {error || 'User not found'}
-                    </div>
-                    <Link href="/dashboard/users" className="text-gold-500 hover:text-gold-400 mt-4 inline-block">
-                        ← Back to Users
+                    <Link href="/dashboard/users" className="text-gold-500 hover:text-gold-400 mb-6 inline-flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Users
                     </Link>
+                    <ErrorDisplay
+                        title="Failed to load user"
+                        message={error || 'User not found'}
+                        showBackButton={false}
+                    />
                 </div>
             </div>
         );

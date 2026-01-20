@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, RefreshCw, AlertTriangle } from 'lucide-react';
 import { adminAPI, mediaAPI, commentsAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
+import { useToast } from '@/contexts/ToastContext';
 import { ContentItem } from '@/components/moderation/ContentItem';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 
 export default function ModerationPage() {
+    const { showToast } = useToast();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -15,17 +19,10 @@ export default function ModerationPage() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    // Debounce search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchContent();
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [search, type, page]);
-
-    const fetchContent = async () => {
+    const fetchContent = useCallback(async () => {
         try {
             setLoading(true);
+            setError('');
             const data = await adminAPI.getContent({
                 page,
                 limit: 20,
@@ -35,23 +32,28 @@ export default function ModerationPage() {
             });
 
             // Normalize data structure if needed directly from API
-            // The API response items should already match what ContentItem expects roughly
-            // but let's ensure author mapping matches the component expecting 'originalAuthor' or 'author'
             const normalizedItems = data.items.map((item: any) => ({
                 ...item,
-                originalAuthor: item.author // Remapping for component consistency
+                originalAuthor: item.author
             }));
 
             setItems(normalizedItems);
             setTotal(data.total);
-            setError('');
         } catch (err) {
             console.error(err);
-            setError('Failed to load content');
+            setError(getErrorMessage(err));
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, type, search]);
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchContent();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [fetchContent]);
 
     // Modal state
     const [deleteModal, setDeleteModal] = useState<{
@@ -88,12 +90,12 @@ export default function ModerationPage() {
                 await commentsAPI.delete(itemId);
             }
 
-            // Refresh list
+            showToast('success', `${itemType === 'video' ? 'Video' : 'Comment'} deleted successfully`);
             fetchContent();
             setDeleteModal({ isOpen: false, itemId: '', itemType: 'video', isLoading: false });
         } catch (err) {
-            alert('Failed to delete content');
             console.error(err);
+            showToast('error', getErrorMessage(err));
             setDeleteModal(prev => ({ ...prev, isLoading: false }));
         }
     };

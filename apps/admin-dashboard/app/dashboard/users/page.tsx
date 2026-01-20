@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { usersAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
 import { User } from '@/lib/types';
 import UsersTable from '@/components/users/UsersTable';
 import UserFilters from '@/components/users/UserFilters';
 import Pagination from '@/components/common/Pagination';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 
 export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
@@ -42,6 +44,7 @@ export default function UsersPage() {
         const fetchUsers = async () => {
             try {
                 setIsLoading(true);
+                setError(null);
                 const response = await usersAPI.getAll({
                     page: currentPage,
                     limit: ITEMS_PER_PAGE,
@@ -61,19 +64,9 @@ export default function UsersPage() {
                     console.error('Unexpected API response format:', response);
                     setUsers([]);
                 }
-                setError(null);
             } catch (err: any) {
                 console.error('Failed to fetch users:', err);
-                const status = err.response?.status;
-                const message = err.response?.data?.message || err.message;
-
-                if (status === 403) {
-                    setError('Access denied. You do not have admin permissions.');
-                } else if (status === 401) {
-                    setError('Session expired. Please log in again.');
-                } else {
-                    setError(`Failed to load users: ${message}`);
-                }
+                setError(getErrorMessage(err));
             } finally {
                 setIsLoading(false);
             }
@@ -149,10 +142,10 @@ export default function UsersPage() {
                 </div>
 
                 {error ? (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">Error: </strong>
-                        <span className="block sm:inline">{error}</span>
-                    </div>
+                    <ErrorDisplay
+                        title="Failed to load users"
+                        message={error}
+                    />
                 ) : (
                     <>
                         <UsersTable users={users} isLoading={isLoading} />

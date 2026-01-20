@@ -1,20 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { adminAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
 import { AuditLogsTable } from '@/components/audit/AuditLogsTable';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 import { RefreshCw, Filter } from 'lucide-react';
 
 export default function AuditLogsPage() {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [actionFilter, setActionFilter] = useState('');
 
-    const fetchLogs = async () => {
+    const fetchLogs = useCallback(async () => {
         try {
             setLoading(true);
+            setError('');
             const data = await adminAPI.getAuditLogs({
                 page,
                 limit: 20,
@@ -22,16 +26,17 @@ export default function AuditLogsPage() {
             });
             setLogs(data.items);
             setTotal(data.total);
-        } catch (error) {
-            console.error('Failed to load audit logs:', error);
+        } catch (err) {
+            console.error('Failed to load audit logs:', err);
+            setError(getErrorMessage(err));
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, actionFilter]);
 
     useEffect(() => {
         fetchLogs();
-    }, [page, actionFilter]);
+    }, [fetchLogs]);
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-6">
@@ -67,7 +72,15 @@ export default function AuditLogsPage() {
                 </select>
             </div>
 
-            <AuditLogsTable logs={logs} loading={loading} />
+            {error ? (
+                <ErrorDisplay
+                    title="Failed to load audit logs"
+                    message={error}
+                    onRetry={fetchLogs}
+                />
+            ) : (
+                <AuditLogsTable logs={logs} loading={loading} />
+            )}
 
             {/* Pagination */}
             {!loading && total > 0 && (

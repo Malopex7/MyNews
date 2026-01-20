@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
 import { AdminStats, UserAnalytics, ContentAnalytics, ReportAnalytics, DashboardActivity } from '@/lib/types';
 import MetricsCard from '@/components/common/MetricsCard';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 import UserGrowthChart from '@/components/dashboard/UserGrowthChart';
 import ContentCreationChart from '@/components/dashboard/ContentCreationChart';
 import ReportVolumeChart from '@/components/dashboard/ReportVolumeChart';
@@ -58,34 +60,51 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [statsData, userData, contentData, reportData, activityData] = await Promise.all([
-                    adminAPI.getStats(),
-                    adminAPI.getUserAnalytics('30'),
-                    adminAPI.getContentAnalytics('30'),
-                    adminAPI.getReportAnalytics('30'),
-                    adminAPI.getRecentActivity(10)
-                ]);
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const [statsData, userData, contentData, reportData, activityData] = await Promise.all([
+                adminAPI.getStats(),
+                adminAPI.getUserAnalytics('30'),
+                adminAPI.getContentAnalytics('30'),
+                adminAPI.getReportAnalytics('30'),
+                adminAPI.getRecentActivity(10)
+            ]);
 
-                setStats(statsData);
-                setUserAnalytics(userData);
-                setContentAnalytics(contentData);
-                setReportAnalytics(reportData);
-                setActivity(activityData);
-                setError(null);
-            } catch (err) {
-                console.error('Failed to fetch dashboard data:', err);
-                setError('Failed to load dashboard data');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+            setStats(statsData);
+            setUserAnalytics(userData);
+            setContentAnalytics(contentData);
+            setReportAnalytics(reportData);
+            setActivity(activityData);
+        } catch (err) {
+            console.error('Failed to fetch dashboard data:', err);
+            setError(getErrorMessage(err));
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    if (error && !loading) {
+        return (
+            <div className="p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-text-primary mb-2">Dashboard</h1>
+                    </div>
+                    <ErrorDisplay
+                        title="Failed to load dashboard"
+                        message={error}
+                        onRetry={fetchData}
+                    />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-8">
@@ -99,12 +118,6 @@ export default function DashboardPage() {
                         Here&apos;s what&apos;s happening with FanFlick today.
                     </p>
                 </div>
-
-                {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-8 text-red-400">
-                        {error}
-                    </div>
-                )}
 
                 {/* User Metrics */}
                 <div className="mb-8">

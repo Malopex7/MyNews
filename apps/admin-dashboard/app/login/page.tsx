@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { getErrorMessage } from '@/lib/errors';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ export default function LoginPage() {
             await login(email, password);
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Invalid credentials. Please try again.');
+            setError(getErrorMessage(err));
         } finally {
             setIsLoading(false);
         }

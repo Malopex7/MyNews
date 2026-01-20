@@ -128,8 +128,8 @@ Phased development plan for the FanFlick Admin Dashboard.
 
 - [ ] Responsive design improvements
 - [ ] Add loading skeletons
-- [ ] Improve error handling & messages
-- [ ] Add success/error toast notifications
+- [x] Improve error handling & messages
+- [x] Add success/error toast notifications
 - [ ] Optimize performance (lazy loading, etc.)
 - [ ] Add keyboard shortcuts
 - [ ] Create admin user guide documentation
@@ -183,11 +183,13 @@ Phased development plan for the FanFlick Admin Dashboard.
   - Recent activity feed
 
 **In Progress:**
-- 🚧 Phase 5 - Advanced Moderation (30%)
+- 🚧 Phase 5 - Advanced Moderation (80%)
   - Content moderation backend (Complete)
   - Admin delete permissions (Complete)
-  - Pending: Frontend implementation and Audit logs
--  Phase 2 - Report Management (90%)
+  - Audit log model & endpoints (Complete)
+  - Content moderation page (Complete)
+  - Pending: Final testing of moderation workflows
+- 🚧 Phase 2 - Report Management (90%)
   - Reports list page (Complete)
   - Report details page (Complete)
   - Pending: Final testing
@@ -197,8 +199,12 @@ Phased development plan for the FanFlick Admin Dashboard.
   - Pending: Suspend/Unsuspend integration testing
 
 **Next Up:**
-- � Phase 6 - Polish & Refinement
+- 📋 Phase 6 - Polish & Refinement
   - Responsive design
   - Performance optimization
+
+**Recent Fixes:**
+- ✅ Fixed TypeScript iterator error in `adminController.ts` `getContent()` function (2026-01-20)
+  - Resolved CI pipeline failure caused by mixed types in `Promise.all` results
 
 **Timeline:** Estimated 6 weeks for full implementation

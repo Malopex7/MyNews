@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { reportsAPI } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errors';
 import { Report, ReportStatus } from '@/lib/types';
 import ReportsTable from '@/components/reports/ReportsTable';
 import Pagination from '@/components/common/Pagination';
 import StatusFilter from '@/components/reports/StatusFilter';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
 
 // Mock data integration flag - remove when real API is populated
 const USE_MOCK_DATA = false;
@@ -84,16 +86,7 @@ export default function ReportsPage() {
                 }
             } catch (err: any) {
                 console.error('Failed to fetch reports:', err);
-                const status = err.response?.status;
-                const message = err.response?.data?.message || err.message;
-
-                if (status === 403) {
-                    setError('Access denied. You do not have admin permissions.');
-                } else if (status === 401) {
-                    setError('Session expired. Please log in again.');
-                } else {
-                    setError(`Failed to load reports: ${message}`);
-                }
+                setError(getErrorMessage(err));
             } finally {
                 setIsLoading(false);
             }
@@ -132,10 +125,10 @@ export default function ReportsPage() {
                 </div>
 
                 {error ? (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">Error: </strong>
-                        <span className="block sm:inline">{error}</span>
-                    </div>
+                    <ErrorDisplay
+                        title="Failed to load reports"
+                        message={error}
+                    />
                 ) : (
                     <>
                         <ReportsTable reports={reports} isLoading={isLoading} />
