@@ -9,7 +9,7 @@ interface UserFiltersProps {
     onProfileTypeChange: (profileType: string) => void;
 }
 
-const selectClasses = "px-3 py-2 bg-bg-secondary border border-border-default rounded-lg text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all cursor-pointer";
+const selectClasses = "px-3 py-2 bg-[#1c1c2e] border border-[#2d2d42] rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer";
 
 export default function UserFilters({
     role,

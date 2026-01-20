@@ -116,12 +116,12 @@ export default function ModerationPage() {
 
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-text-primary">Content Moderation</h1>
-                    <p className="text-text-muted mt-1">Browse and manage platform content</p>
+                    <h1 className="text-3xl font-bold text-white">Content Moderation</h1>
+                    <p className="text-gray-400 mt-1">Browse and manage platform content</p>
                 </div>
                 <button
                     onClick={fetchContent}
-                    className="p-2 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                 >
                     <RefreshCw className="w-5 h-5" />
                 </button>
@@ -129,14 +129,14 @@ export default function ModerationPage() {
 
             {/* Filters & Search */}
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex bg-background-surface p-1 rounded-lg border border-background-highlight self-start">
+                <div className="flex bg-[#1c1c2e] p-1 rounded-lg border border-[#2d2d42] self-start">
                     {['all', 'video', 'comment'].map((t) => (
                         <button
                             key={t}
                             onClick={() => { setType(t); setPage(1); }}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${type === t
-                                ? 'bg-background-highlight text-text-primary shadow-sm'
-                                : 'text-text-muted hover:text-text-primary'
+                                ? 'bg-[#2d2d42] text-white shadow-sm'
+                                : 'text-gray-400 hover:text-white'
                                 }`}
                         >
                             {t.charAt(0).toUpperCase() + t.slice(1)}s
@@ -145,13 +145,13 @@ export default function ModerationPage() {
                 </div>
 
                 <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input
                         type="text"
                         placeholder="Search content..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-background-surface border border-background-highlight rounded-lg pl-10 pr-4 py-2 text-text-primary focus:outline-none focus:border-primary/50"
+                        className="w-full bg-[#1c1c2e] border border-[#2d2d42] rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-blue-500/50 placeholder-gray-500"
                     />
                 </div>
             </div>
@@ -166,10 +166,10 @@ export default function ModerationPage() {
 
             {loading ? (
                 <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
             ) : items.length === 0 ? (
-                <div className="text-center py-12 text-text-muted bg-background-surface rounded-xl border border-background-highlight">
+                <div className="text-center py-12 text-gray-500 bg-[#1c1c2e] rounded-xl border border-[#2d2d42]">
                     No content found matching your filters.
                 </div>
             ) : (
@@ -190,18 +190,18 @@ export default function ModerationPage() {
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => p - 1)}
-                        className="px-4 py-2 rounded-lg bg-background-surface border border-background-highlight disabled:opacity-50 hover:bg-background-highlight text-text-primary"
+                        className="px-4 py-2 rounded-lg bg-[#1c1c2e] border border-[#2d2d42] disabled:opacity-50 hover:bg-[#2d2d42] text-gray-300 transition-colors"
                     >
                         Previous
                     </button>
-                    <span className="px-4 py-2 text-text-muted">
+                    <span className="px-4 py-2 text-gray-400">
                         Page {page}
                     </span>
                     <button
                         onClick={() => setPage(p => p + 1)}
                         // Simple check, implies backend returns correct total
                         disabled={items.length < 20}
-                        className="px-4 py-2 rounded-lg bg-background-surface border border-background-highlight disabled:opacity-50 hover:bg-background-highlight text-text-primary"
+                        className="px-4 py-2 rounded-lg bg-[#1c1c2e] border border-[#2d2d42] disabled:opacity-50 hover:bg-[#2d2d42] text-gray-300 transition-colors"
                     >
                         Next
                     </button>

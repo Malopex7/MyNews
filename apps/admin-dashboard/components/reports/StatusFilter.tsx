@@ -20,11 +20,11 @@ export default function StatusFilter({ currentStatus, onStatusChange }: StatusFi
     return (
         <div className="relative inline-block text-left">
             <div className="flex items-center space-x-2">
-                <Filter className="h-5 w-5 text-text-secondary" />
+                <Filter className="h-5 w-5 text-gray-500" />
                 <select
                     value={currentStatus}
                     onChange={(e) => onStatusChange(e.target.value as ReportStatus | 'all')}
-                    className="block w-full rounded-md border-border-default bg-background-surface py-2 pl-3 pr-10 text-text-primary focus:border-primary-default focus:outline-none focus:ring-1 focus:ring-primary-default sm:text-sm"
+                    className="block w-full rounded-lg border-[#2d2d42] bg-[#1c1c2e] py-2 pl-3 pr-10 text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm cursor-pointer shadow-sm transition-all border"
                 >
                     {statuses.map((status) => (
                         <option key={status.value} value={status.value}>

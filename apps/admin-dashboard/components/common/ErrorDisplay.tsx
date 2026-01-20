@@ -43,8 +43,8 @@ export function ErrorDisplay({
                     <button
                         onClick={() => router.back()}
                         className="flex items-center gap-2 px-4 py-2 rounded-lg
-                            bg-background-surface border border-background-highlight
-                            text-text-secondary hover:text-text-primary hover:bg-background-highlight
+                            bg-[#1c1c2e] border border-[#2d2d42]
+                            text-gray-400 hover:text-white hover:bg-[#2d2d42]
                             transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />

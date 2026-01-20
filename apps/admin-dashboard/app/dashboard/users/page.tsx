@@ -88,10 +88,10 @@ export default function UsersPage() {
                 <div className="mb-6 flex flex-col gap-4">
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-text-primary mb-2">
+                            <h1 className="text-3xl font-bold text-white mb-2">
                                 User Management
                             </h1>
-                            <p className="text-text-secondary">
+                            <p className="text-gray-400">
                                 View and manage platform users.
                             </p>
                         </div>
@@ -101,10 +101,10 @@ export default function UsersPage() {
                                 placeholder="Search by name or email..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full sm:w-80 px-4 py-2 pl-10 bg-bg-secondary border border-border-default rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent transition-all"
+                                className="w-full sm:w-80 px-4 py-2 pl-10 bg-[#1c1c2e] border border-[#2d2d42] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
                             />
                             <svg
-                                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary"
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -116,7 +116,7 @@ export default function UsersPage() {
 
                     {/* Filters Row */}
                     <div className="flex flex-wrap items-center gap-3">
-                        <span className="text-sm text-text-secondary">Filters:</span>
+                        <span className="text-sm text-gray-500">Filters:</span>
                         <UserFilters
                             role={roleFilter}
                             status={statusFilter}
@@ -133,7 +133,7 @@ export default function UsersPage() {
                                     setProfileTypeFilter('');
                                     setSearchQuery('');
                                 }}
-                                className="text-sm text-gold-500 hover:text-gold-400 transition-colors"
+                                className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
                             >
                                 Clear all
                             </button>

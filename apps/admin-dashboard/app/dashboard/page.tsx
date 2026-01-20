@@ -237,22 +237,20 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Analytics Charts & Activity Feed */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-8">
-                    {/* Charts Column (2/3 width on large screens) */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div className="lg:col-span-2">
-                                <UserGrowthChart data={userAnalytics} loading={loading} />
-                            </div>
-                            <div className="lg:col-span-2">
-                                <ContentCreationChart data={contentAnalytics} loading={loading} />
-                            </div>
-                        </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-8">
+                    {/* Row 1 */}
+                    <div className="lg:col-span-2">
+                        <UserGrowthChart data={userAnalytics} loading={loading} />
+                    </div>
+                    <div className="lg:col-span-1">
+                        <ReportVolumeChart data={reportAnalytics} loading={loading} />
                     </div>
 
-                    {/* Sidebar Column (1/3 width on large screens) */}
-                    <div className="space-y-8">
-                        <ReportVolumeChart data={reportAnalytics} loading={loading} />
+                    {/* Row 2 */}
+                    <div className="lg:col-span-2">
+                        <ContentCreationChart data={contentAnalytics} loading={loading} />
+                    </div>
+                    <div className="lg:col-span-1">
                         <RecentActivityFeed activities={activity} loading={loading} />
                     </div>
                 </div>

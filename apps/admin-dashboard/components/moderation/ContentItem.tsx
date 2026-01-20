@@ -25,7 +25,7 @@ export function ContentItem({ item, onDelete }: ContentItemProps) {
     };
 
     return (
-        <div className="bg-background-surface rounded-xl border border-background-highlight p-4 flex items-start gap-4 transition-colors hover:border-primary/30">
+        <div className="bg-[#1c1c2e] rounded-xl border border-[#2d2d42] p-4 flex items-start gap-4 transition-colors hover:border-blue-500/30 shadow-md">
             {/* Type Indicator */}
             <div className={`p-2 rounded-lg ${typeColor}`}>
                 <TypeIcon className="w-5 h-5" />
@@ -34,25 +34,25 @@ export function ContentItem({ item, onDelete }: ContentItemProps) {
             {/* Content Info */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-text-muted">
+                    <span className="text-xs font-medium text-gray-400">
                         {isVideo ? 'VIDEO' : 'COMMENT'} • {formatDate(item.createdAt)}
                     </span>
-                    <span className="text-xs text-text-muted">
+                    <span className="text-xs text-gray-500 font-mono">
                         ID: {item._id}
                     </span>
                 </div>
 
-                <h3 className="text-sm font-semibold text-text-primary mb-1 truncate">
+                <h3 className="text-sm font-semibold text-white mb-1 truncate">
                     {item.title || 'Untitled'}
                 </h3>
 
-                <p className="text-sm text-text-secondary line-clamp-2 md:line-clamp-none">
+                <p className="text-sm text-gray-400 line-clamp-2 md:line-clamp-none">
                     {item.content || item.description || 'No content'}
                 </p>
 
                 {/* Author Info */}
                 <div className="mt-3 flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-background-highlight overflow-hidden relative">
+                    <div className="w-5 h-5 rounded-full bg-[#2d2d42] overflow-hidden relative border border-white/10">
                         {item.originalAuthor?.profile?.avatar?.url ? (
                             <Image
                                 src={item.originalAuthor.profile.avatar.url}
@@ -61,11 +61,13 @@ export function ContentItem({ item, onDelete }: ContentItemProps) {
                                 className="object-cover"
                             />
                         ) : (
-                            <div className="w-full h-full bg-primary/20" />
+                            <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-[10px] text-blue-400 font-bold">
+                                {(item.originalAuthor?.name || 'U').charAt(0).toUpperCase()}
+                            </div>
                         )}
                     </div>
-                    <span className="text-xs text-text-muted">
-                        by <span className="text-text-primary">{item.originalAuthor?.name || 'Unknown User'}</span>
+                    <span className="text-xs text-gray-500">
+                        by <span className="text-gray-300 font-medium">{item.originalAuthor?.name || 'Unknown User'}</span>
                     </span>
                 </div>
             </div>
@@ -73,7 +75,7 @@ export function ContentItem({ item, onDelete }: ContentItemProps) {
             {/* Actions */}
             <button
                 onClick={() => onDelete(item._id, item.entityType)}
-                className="p-2 text-text-muted hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                 title="Delete content"
             >
                 <Trash2 className="w-4 h-4" />

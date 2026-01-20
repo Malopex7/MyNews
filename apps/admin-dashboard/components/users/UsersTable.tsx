@@ -27,79 +27,79 @@ const getRoleBadgeClasses = (role: string) => {
     switch (role) {
         case 'admin':
         case 'super_admin':
-            return 'bg-purple-100 text-purple-800';
+            return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
         case 'moderator':
-            return 'bg-blue-100 text-blue-800';
+            return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
     }
 };
 
 const getProfileTypeBadgeClasses = (type: string) => {
     switch (type) {
         case 'creator':
-            return 'bg-amber-100 text-amber-800';
+            return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
         case 'fan':
-            return 'bg-green-100 text-green-800';
+            return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
         default:
-            return 'bg-gray-100 text-gray-600';
+            return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
     }
 };
 
 const getStatusBadge = (suspended?: boolean) => {
     if (suspended) {
-        return <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Suspended</span>;
+        return <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-red-500/10 text-red-400 border border-red-500/20">Suspended</span>;
     }
-    return <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>;
+    return <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>;
 };
 
 export default function UsersTable({ users, isLoading }: UsersTableProps) {
     if (isLoading) {
         return (
-            <div className="bg-bg-card rounded-lg shadow-lg border border-border-default p-6">
+            <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6">
                 <LoadingSkeleton />
             </div>
         );
     }
 
     return (
-        <div className="bg-bg-card rounded-lg shadow-lg border border-border-default overflow-hidden">
+        <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    <thead className="bg-bg-secondary border-b border-border-default">
+                    <thead className="bg-[#13131f] border-b border-[#2d2d42]">
                         <tr>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">User</th>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">Email</th>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">Role</th>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">Profile</th>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">Status</th>
-                            <th className="text-left py-4 px-6 text-sm font-semibold text-text-primary">Actions</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">User</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Email</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Role</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Profile</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Status</th>
+                            <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-[#2d2d42]">
                         {users.map((user, index) => (
-                            <tr key={user._id || `user-${index}`} className="border-b border-border-default hover:bg-bg-secondary/50 transition-colors">
+                            <tr key={user._id || `user-${index}`} className="group hover:bg-[#2d2d42]/30 transition-colors">
                                 <td className="py-4 px-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gold-500 to-amber-600 flex items-center justify-center text-white font-bold text-sm">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 shadow-inner flex items-center justify-center text-white font-bold text-sm border border-white/10">
                                             {user.name?.charAt(0).toUpperCase() || 'U'}
                                         </div>
                                         <div>
-                                            <div className="font-medium text-text-primary">{user.name}</div>
+                                            <div className="font-medium text-white group-hover:text-blue-400 transition-colors">{user.name}</div>
                                             {user.handle && (
-                                                <div className="text-sm text-text-secondary">@{user.handle}</div>
+                                                <div className="text-sm text-gray-500">@{user.handle}</div>
                                             )}
                                         </div>
                                     </div>
                                 </td>
-                                <td className="py-4 px-6 text-text-secondary">{user.email}</td>
+                                <td className="py-4 px-6 text-gray-400">{user.email}</td>
                                 <td className="py-4 px-6">
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize ${getRoleBadgeClasses(user.role)}`}>
+                                    <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full capitalize ${getRoleBadgeClasses(user.role)}`}>
                                         {user.role?.replace('_', ' ') || 'user'}
                                     </span>
                                 </td>
                                 <td className="py-4 px-6">
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize ${getProfileTypeBadgeClasses(user.profileType)}`}>
+                                    <span className={`px-2.5 py-0.5 text-xs font-medium rounded-full capitalize ${getProfileTypeBadgeClasses(user.profileType)}`}>
                                         {user.profileType || 'unknown'}
                                     </span>
                                 </td>
@@ -109,7 +109,7 @@ export default function UsersTable({ users, isLoading }: UsersTableProps) {
                                 <td className="py-4 px-6">
                                     <Link
                                         href={`/dashboard/users/${user._id || user.id}`}
-                                        className="text-gold-500 hover:text-gold-400 font-medium text-sm transition-colors"
+                                        className="text-blue-400 hover:text-blue-300 font-medium text-sm transition-colors py-1 px-3 rounded hover:bg-blue-500/10"
                                     >
                                         View Details →
                                     </Link>

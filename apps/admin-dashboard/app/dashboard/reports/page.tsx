@@ -111,10 +111,10 @@ export default function ReportsPage() {
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-text-primary mb-2">
+                        <h1 className="text-3xl font-bold text-white mb-2">
                             Content Reports
                         </h1>
-                        <p className="text-text-secondary">
+                        <p className="text-gray-400">
                             Review and manage user reports on content.
                         </p>
                     </div>
@@ -140,7 +140,7 @@ export default function ReportsPage() {
                             />
                         )}
                         {!isLoading && !error && reports.length === 0 && (
-                            <div className="text-center py-12 text-text-secondary">
+                            <div className="text-center py-12 text-gray-500">
                                 No reports found matching the selected filters.
                             </div>
                         )}

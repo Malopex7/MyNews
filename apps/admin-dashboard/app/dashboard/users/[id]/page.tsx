@@ -117,13 +117,13 @@ export default function UserDetailPage() {
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="animate-pulse space-y-6">
-                        <div className="h-8 bg-bg-secondary rounded w-1/3" />
-                        <div className="bg-bg-card rounded-lg p-6 space-y-4">
+                        <div className="h-8 bg-[#1c1c2e] rounded w-1/3" />
+                        <div className="bg-[#1c1c2e] rounded-xl p-6 space-y-4 border border-[#2d2d42]">
                             <div className="flex items-center gap-4">
-                                <div className="w-20 h-20 bg-bg-secondary rounded-full" />
+                                <div className="w-20 h-20 bg-[#2d2d42] rounded-full" />
                                 <div className="space-y-2">
-                                    <div className="h-6 bg-bg-secondary rounded w-48" />
-                                    <div className="h-4 bg-bg-secondary rounded w-32" />
+                                    <div className="h-6 bg-[#2d2d42] rounded w-48" />
+                                    <div className="h-4 bg-[#2d2d42] rounded w-32" />
                                 </div>
                             </div>
                         </div>
@@ -137,7 +137,7 @@ export default function UserDetailPage() {
         return (
             <div className="p-8">
                 <div className="max-w-4xl mx-auto">
-                    <Link href="/dashboard/users" className="text-gold-500 hover:text-gold-400 mb-6 inline-flex items-center gap-1">
+                    <Link href="/dashboard/users" className="text-blue-400 hover:text-blue-300 mb-6 inline-flex items-center gap-1 transition-colors">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
@@ -167,7 +167,7 @@ export default function UserDetailPage() {
 
             <div className="max-w-4xl mx-auto">
                 {/* Back Link */}
-                <Link href="/dashboard/users" className="text-gold-500 hover:text-gold-400 mb-6 inline-flex items-center gap-1">
+                <Link href="/dashboard/users" className="text-blue-400 hover:text-blue-300 mb-6 inline-flex items-center gap-1 transition-colors">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
@@ -175,11 +175,11 @@ export default function UserDetailPage() {
                 </Link>
 
                 {/* User Profile Card */}
-                <div className="bg-bg-card rounded-lg shadow-lg border border-border-default p-6 mb-6">
+                <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 mb-6">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div className="flex items-center gap-4">
                             {/* Avatar */}
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gold-500 to-amber-600 flex items-center justify-center text-white font-bold text-2xl">
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl shadow-inner border border-white/10">
                                 {user.profile?.avatarUrl ? (
                                     <img src={user.profile.avatarUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
                                 ) : (
@@ -189,31 +189,31 @@ export default function UserDetailPage() {
 
                             {/* User Info */}
                             <div>
-                                <h1 className="text-2xl font-bold text-text-primary">
+                                <h1 className="text-2xl font-bold text-white">
                                     {user.profile?.displayName || user.name}
                                 </h1>
                                 {user.username && (
-                                    <p className="text-text-secondary">@{user.username}</p>
+                                    <p className="text-gray-400">@{user.username}</p>
                                 )}
-                                <p className="text-text-secondary text-sm">{user.email}</p>
+                                <p className="text-gray-500 text-sm">{user.email}</p>
 
                                 {/* Badges */}
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize ${user.role === 'admin' || user.role === 'super_admin'
-                                        ? 'bg-purple-100 text-purple-800'
-                                        : 'bg-gray-100 text-gray-800'
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize border ${user.role === 'admin' || user.role === 'super_admin'
+                                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                                        : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
                                         }`}>
                                         {user.role?.replace('_', ' ') || 'user'}
                                     </span>
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize ${user.profileType === 'creator'
-                                        ? 'bg-amber-100 text-amber-800'
-                                        : 'bg-green-100 text-green-800'
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full capitalize border ${user.profileType === 'creator'
+                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                        : 'bg-green-500/10 text-green-400 border-green-500/20'
                                         }`}>
                                         {user.profileType || 'unknown'}
                                     </span>
-                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${user.suspended
-                                        ? 'bg-red-100 text-red-800'
-                                        : 'bg-green-100 text-green-800'
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full border ${user.suspended
+                                        ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                        : 'bg-green-500/10 text-green-400 border-green-500/20'
                                         }`}>
                                         {user.suspended ? 'Suspended' : 'Active'}
                                     </span>
@@ -224,9 +224,9 @@ export default function UserDetailPage() {
                         {/* Actions */}
                         <button
                             onClick={openSuspendModal}
-                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${user.suspended
-                                ? 'bg-green-600 hover:bg-green-700 text-white'
-                                : 'bg-red-600 hover:bg-red-700 text-white'
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors shadow-lg ${user.suspended
+                                ? 'bg-green-600 hover:bg-green-500 text-white'
+                                : 'bg-red-600 hover:bg-red-500 text-white'
                                 }`}
                         >
                             {user.suspended ? 'Unsuspend User' : 'Suspend User'}
@@ -235,19 +235,19 @@ export default function UserDetailPage() {
 
                     {/* Bio */}
                     {user.profile?.bio && (
-                        <div className="mt-4 pt-4 border-t border-border-default">
-                            <h3 className="text-sm font-medium text-text-secondary mb-1">Bio</h3>
-                            <p className="text-text-primary">{user.profile.bio}</p>
+                        <div className="mt-6 pt-6 border-t border-[#2d2d42]">
+                            <h3 className="text-sm font-medium text-gray-400 mb-2">Bio</h3>
+                            <p className="text-gray-200 leading-relaxed">{user.profile.bio}</p>
                         </div>
                     )}
 
                     {/* Creative Focus */}
                     {user.profile?.creativeFocus && user.profile.creativeFocus.length > 0 && (
-                        <div className="mt-4">
-                            <h3 className="text-sm font-medium text-text-secondary mb-2">Creative Focus</h3>
+                        <div className="mt-6">
+                            <h3 className="text-sm font-medium text-gray-400 mb-3">Creative Focus</h3>
                             <div className="flex flex-wrap gap-2">
                                 {user.profile.creativeFocus.map((focus, i) => (
-                                    <span key={i} className="px-3 py-1 bg-bg-secondary rounded-full text-sm text-text-primary">
+                                    <span key={i} className="px-3 py-1 bg-[#2d2d42] rounded-full text-sm text-gray-300 border border-white/5">
                                         {focus}
                                     </span>
                                 ))}
@@ -258,36 +258,38 @@ export default function UserDetailPage() {
 
                 {/* Metrics Card */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-bg-card rounded-lg shadow border border-border-default p-6 text-center">
-                        <div className="text-3xl font-bold text-gold-500">{user.metrics?.followersCount || 0}</div>
-                        <div className="text-text-secondary text-sm">Followers</div>
+                    <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 text-center hover:border-blue-500/30 transition-colors">
+                        <div className="text-3xl font-bold text-blue-400">{user.metrics?.followersCount || 0}</div>
+                        <div className="text-gray-400 text-sm mt-1">Followers</div>
                     </div>
-                    <div className="bg-bg-card rounded-lg shadow border border-border-default p-6 text-center">
-                        <div className="text-3xl font-bold text-gold-500">{user.metrics?.followingCount || 0}</div>
-                        <div className="text-text-secondary text-sm">Following</div>
+                    <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 text-center hover:border-blue-500/30 transition-colors">
+                        <div className="text-3xl font-bold text-blue-400">{user.metrics?.followingCount || 0}</div>
+                        <div className="text-gray-400 text-sm mt-1">Following</div>
                     </div>
-                    <div className="bg-bg-card rounded-lg shadow border border-border-default p-6 text-center">
-                        <div className="text-3xl font-bold text-gold-500">{user.metrics?.totalLikesReceived || 0}</div>
-                        <div className="text-text-secondary text-sm">Total Likes</div>
+                    <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 text-center hover:border-blue-500/30 transition-colors">
+                        <div className="text-3xl font-bold text-blue-400">{user.metrics?.totalLikesReceived || 0}</div>
+                        <div className="text-gray-400 text-sm mt-1">Total Likes</div>
                     </div>
                 </div>
 
                 {/* Account Details */}
-                <div className="bg-bg-card rounded-lg shadow-lg border border-border-default p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Account Details</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span className="text-text-secondary">User ID:</span>
-                            <span className="ml-2 text-text-primary font-mono">{user._id || user.id}</span>
+                <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 mb-6">
+                    <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        Account Details
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                        <div className="p-3 bg-[#13131f] rounded-lg border border-[#2d2d42]">
+                            <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">User ID</span>
+                            <span className="text-gray-300 font-mono select-all">{user._id || user.id}</span>
                         </div>
-                        <div>
-                            <span className="text-text-secondary">Joined:</span>
-                            <span className="ml-2 text-text-primary">{formatDate(user.createdAt)}</span>
+                        <div className="p-3 bg-[#13131f] rounded-lg border border-[#2d2d42]">
+                            <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">Joined</span>
+                            <span className="text-gray-300">{formatDate(user.createdAt)}</span>
                         </div>
                         {user.profile?.website && (
-                            <div className="col-span-2">
-                                <span className="text-text-secondary">Website:</span>
-                                <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="ml-2 text-gold-500 hover:text-gold-400">
+                            <div className="col-span-1 sm:col-span-2 p-3 bg-[#13131f] rounded-lg border border-[#2d2d42]">
+                                <span className="text-gray-500 block text-xs uppercase tracking-wider mb-1">Website</span>
+                                <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 break-all">
                                     {user.profile.website}
                                 </a>
                             </div>
@@ -296,95 +298,101 @@ export default function UserDetailPage() {
                 </div>
 
                 {/* Reports Section */}
-                <div className="bg-bg-card rounded-lg shadow-lg border border-border-default p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Reports Involving User</h2>
+                <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6 mb-6">
+                    <h2 className="text-lg font-semibold text-white mb-4">Reports Involving User</h2>
 
                     {/* Reports Filed BY User */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-medium text-text-secondary mb-2">Reports Filed by User ({reportsFiled.length})</h3>
+                    <div className="mb-6">
+                        <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                            Reports Filed by User
+                            <span className="bg-[#2d2d42] text-gray-300 px-2 py-0.5 rounded-full text-xs">{reportsFiled.length}</span>
+                        </h3>
                         {reportsFiled.length > 0 ? (
                             <div className="space-y-2">
                                 {reportsFiled.map((report) => (
                                     <Link
                                         key={report._id}
                                         href={`/dashboard/reports/${report._id}`}
-                                        className="flex items-center justify-between py-2 px-3 bg-bg-secondary rounded-lg hover:bg-bg-secondary/80 transition-colors"
+                                        className="flex items-center justify-between py-3 px-4 bg-[#2d2d42]/50 hover:bg-[#2d2d42] rounded-lg border border-[#2d2d42] transition-colors group"
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-orange-500">⚠️</span>
-                                            <span className="text-text-primary text-sm capitalize">{report.reason} ({report.contentType})</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-orange-400 bg-orange-500/10 p-1.5 rounded-md">⚠️</span>
+                                            <span className="text-gray-200 text-sm capitalize group-hover:text-white transition-colors">{report.reason} ({report.contentType})</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className={`px-2 py-0.5 text-xs rounded-full capitalize ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                report.status === 'actioned' ? 'bg-green-100 text-green-800' :
-                                                    'bg-gray-100 text-gray-800'
+                                        <div className="flex items-center gap-3">
+                                            <span className={`px-2 py-0.5 text-xs rounded-full capitalize border ${report.status === 'pending' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                report.status === 'actioned' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                                                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
                                                 }`}>
                                                 {report.status}
                                             </span>
-                                            <span className="text-text-secondary text-xs">{formatDateTime(report.createdAt)}</span>
+                                            <span className="text-gray-500 text-xs">{formatDateTime(report.createdAt)}</span>
                                         </div>
                                     </Link>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-text-secondary text-sm">No reports filed</p>
+                            <p className="text-gray-500 text-sm italic py-2">No reports filed</p>
                         )}
                     </div>
 
                     {/* Reports AGAINST User's Content */}
                     <div>
-                        <h3 className="text-sm font-medium text-text-secondary mb-2">Reports Against User's Content ({reportsAgainst.length})</h3>
+                        <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                            Reports Against User's Content
+                            <span className="bg-[#2d2d42] text-gray-300 px-2 py-0.5 rounded-full text-xs">{reportsAgainst.length}</span>
+                        </h3>
                         {reportsAgainst.length > 0 ? (
                             <div className="space-y-2">
                                 {reportsAgainst.map((report) => (
                                     <Link
                                         key={report._id}
                                         href={`/dashboard/reports/${report._id}`}
-                                        className="flex items-center justify-between py-2 px-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                                        className="flex items-center justify-between py-3 px-4 bg-red-500/5 hover:bg-red-500/10 rounded-lg border border-red-500/10 hover:border-red-500/20 transition-colors group"
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-red-500">🚨</span>
-                                            <span className="text-text-primary text-sm capitalize">{report.reason} ({report.contentType})</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-red-400 bg-red-500/10 p-1.5 rounded-md">🚨</span>
+                                            <span className="text-gray-200 text-sm capitalize group-hover:text-white transition-colors">{report.reason} ({report.contentType})</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className={`px-2 py-0.5 text-xs rounded-full capitalize ${report.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                report.status === 'actioned' ? 'bg-green-100 text-green-800' :
-                                                    'bg-gray-100 text-gray-800'
+                                        <div className="flex items-center gap-3">
+                                            <span className={`px-2 py-0.5 text-xs rounded-full capitalize border ${report.status === 'pending' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                                report.status === 'actioned' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                                                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
                                                 }`}>
                                                 {report.status}
                                             </span>
-                                            <span className="text-text-secondary text-xs">{formatDateTime(report.createdAt)}</span>
+                                            <span className="text-gray-500 text-xs">{formatDateTime(report.createdAt)}</span>
                                         </div>
                                     </Link>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-text-secondary text-sm">No reports against user's content</p>
+                            <p className="text-gray-500 text-sm italic py-2">No reports against user's content</p>
                         )}
                     </div>
                 </div>
 
                 {/* Activity Timeline */}
-                <div className="bg-bg-card rounded-lg shadow-lg border border-border-default p-6">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Activity</h2>
+                <div className="bg-[#1c1c2e] rounded-xl shadow-xl border border-[#2d2d42] p-6">
+                    <h2 className="text-lg font-semibold text-white mb-4">Recent Activity</h2>
                     {activity.length > 0 ? (
                         <div className="space-y-3">
                             {activity.map((item, index) => (
-                                <div key={index} className="flex items-start gap-3 py-2 border-b border-border-default last:border-0">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs ${item.type === 'upload' ? 'bg-blue-500' :
-                                        item.type === 'comment' ? 'bg-green-500' : 'bg-orange-500'
+                                <div key={index} className="flex items-start gap-3 py-3 border-b border-[#2d2d42] last:border-0 hover:bg-[#2d2d42]/20 p-2 rounded-lg transition-colors">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs shadow-md ${item.type === 'upload' ? 'bg-blue-600' :
+                                        item.type === 'comment' ? 'bg-green-600' : 'bg-orange-600'
                                         }`}>
                                         {item.type === 'upload' ? '📹' : item.type === 'comment' ? '💬' : '⚠️'}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-text-primary text-sm">{item.description}</p>
-                                        <p className="text-text-secondary text-xs">{formatDateTime(item.createdAt)}</p>
+                                        <p className="text-gray-200 text-sm">{item.description}</p>
+                                        <p className="text-gray-500 text-xs mt-0.5">{formatDateTime(item.createdAt)}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p className="text-text-secondary text-sm">No recent activity</p>
+                        <p className="text-gray-500 text-sm italic">No recent activity</p>
                     )}
                 </div>
             </div>

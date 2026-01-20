@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Flag, Users, BarChart3, Shield, LogOut } from 'lucide-react';
+import { LayoutDashboard, Flag, Users, Shield, LogOut } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface NavItem {
@@ -16,7 +16,6 @@ const navigation: NavItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Reports', href: '/dashboard/reports', icon: Flag },
     { name: 'Users', href: '/dashboard/users', icon: Users },
-    { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Moderation', href: '/dashboard/moderation', icon: Shield },
     { name: 'Audit Logs', href: '/dashboard/audit-logs', icon: Flag },
 ];
