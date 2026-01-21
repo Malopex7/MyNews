@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services';
 import { UpdateUserSchema } from '@packages/schemas';
 import mongoose from 'mongoose';
-import { Media, User, Comment, Report } from '../models';
+import { Media, User, Comment, Report, AuditLog } from '../models';
 
 // Helper to format user response
 const formatUserResponse = (user: any, includePrivate: boolean = true) => {
@@ -189,6 +189,20 @@ export const suspendUser = async (
             return;
         }
 
+        // Create audit log
+        const adminId = (req as any).user?.userId;
+        if (adminId) {
+            await AuditLog.create({
+                adminId,
+                action: 'suspend_user',
+                targetType: 'user',
+                targetId: user._id,
+                details: { reason: req.body.reason || 'Admin action' },
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            });
+        }
+
         res.json(formatUserResponse(user, true));
     } catch (error) {
         next(error);
@@ -206,6 +220,20 @@ export const unsuspendUser = async (
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
+        }
+
+        if (user) {
+            // Create audit log
+            const adminId = (req as any).user?.userId;
+            await AuditLog.create({
+                adminId,
+                action: 'unsuspend_user',
+                targetType: 'user',
+                targetId: user._id,
+                details: { reason: req.body.reason || 'Admin action' },
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            });
         }
 
         res.json(formatUserResponse(user, true));

@@ -53,12 +53,12 @@ Phased development plan for the FanFlick Admin Dashboard.
 - [x] Add user activity endpoint
 
 ### Frontend
-- [ ] Build users list page
+- [x] Build users list page
   - [x] Display users in table
   - [x] Add search by username/email
   - [x] Filter by role, status, profile type
   - [x] Implement pagination
-- [/] Build user detail page
+- [x] Build user detail page
   - [x] Show user profile & metrics
   - [x] Display activity timeline
   - [x] Show reports involving user
@@ -189,14 +189,14 @@ Phased development plan for the FanFlick Admin Dashboard.
   - Audit log model & endpoints (Complete)
   - Content moderation page (Complete)
   - Pending: Final testing of moderation workflows
-- 🚧 Phase 2 - Report Management (90%)
+- 🚧 Phase 2 - Report Management (100%)
   - Reports list page (Complete)
   - Report details page (Complete)
-  - Pending: Final testing
-- 🚧 Phase 3 - User Management (80%)
+  - UI Polish (Complete)
+- 🚧 Phase 3 - User Management (100%)
   - User list page (Complete)
-  - User details page (Partial)
-  - Pending: Suspend/Unsuspend integration testing
+  - User details page (Complete)
+  - Suspend/Unsuspend integration (Complete)
 
 **Next Up:**
 - 📋 Phase 6 - Polish & Refinement

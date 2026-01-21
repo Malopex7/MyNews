@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import mongoose from 'mongoose';
 import * as mediaService from '../services/mediaService';
-import { MediaType, Media } from '../models';
+import { MediaType, Media, AuditLog } from '../models';
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
@@ -197,6 +197,18 @@ export const remove = async (
         if (!media) {
             res.status(404).json({ message: 'Media not found' });
             return;
+        }
+
+        if (isAdmin) {
+            await AuditLog.create({
+                adminId: userId,
+                action: 'delete_media',
+                targetType: 'media',
+                targetId: id,
+                details: { reason: req.body.reason || 'Admin action' },
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            });
         }
 
         res.json({ success: true, message: 'Media deleted successfully' });

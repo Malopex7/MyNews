@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User, Media, Report, Comment } from '../models';
+import { User, Media, Report, Comment, AuditLog } from '../models';
 
 /**
  * Get platform-wide admin statistics
@@ -725,8 +725,7 @@ export const getContent = async (
     }
 };
 
-// Import AuditLog (assuming it's exported from models)
-import { AuditLog } from '../models';
+
 
 /**
  * Create an audit log entry

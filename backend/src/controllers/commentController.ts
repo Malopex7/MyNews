@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Comment, Media } from '../models';
+import { Comment, Media, AuditLog } from '../models';
 import mongoose from 'mongoose';
 import { createCommentNotification } from '../services/notificationService';
 
@@ -131,6 +131,18 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
         });
 
         await Comment.findByIdAndDelete(commentId);
+
+        if (isAdmin) {
+            await AuditLog.create({
+                adminId: userId,
+                action: 'delete_comment',
+                targetType: 'comment',
+                targetId: commentId,
+                details: { reason: req.body.reason || 'Admin action', text: comment.text },
+                ipAddress: req.ip,
+                userAgent: req.get('user-agent'),
+            });
+        }
 
         res.json({ message: 'Comment deleted successfully' });
     } catch (error) {
