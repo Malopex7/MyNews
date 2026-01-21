@@ -6,11 +6,26 @@ import { adminAPI } from '@/lib/api';
 import { getErrorMessage } from '@/lib/errors';
 import { AdminStats, UserAnalytics, ContentAnalytics, ReportAnalytics, DashboardActivity } from '@/lib/types';
 import MetricsCard from '@/components/common/MetricsCard';
-import { ErrorDisplay } from '@/components/common/ErrorDisplay';
-import UserGrowthChart from '@/components/dashboard/UserGrowthChart';
-import ContentCreationChart from '@/components/dashboard/ContentCreationChart';
-import ReportVolumeChart from '@/components/dashboard/ReportVolumeChart';
+import dynamic from 'next/dynamic';
+import { ChartSkeleton } from '@/components/dashboard/ChartSkeleton';
 import RecentActivityFeed from '@/components/dashboard/RecentActivityFeed';
+import { ErrorDisplay } from '@/components/common/ErrorDisplay';
+
+// Lazy load charts which use heavy Recharts library
+const UserGrowthChart = dynamic(() => import('@/components/dashboard/UserGrowthChart'), {
+    loading: () => <ChartSkeleton height="h-[420px]" spinnerColor="border-t-[#60A5FA]" />,
+    ssr: false
+});
+
+const ContentCreationChart = dynamic(() => import('@/components/dashboard/ContentCreationChart'), {
+    loading: () => <ChartSkeleton height="h-[420px]" spinnerColor="border-t-[#3B82F6]" />,
+    ssr: false
+});
+
+const ReportVolumeChart = dynamic(() => import('@/components/dashboard/ReportVolumeChart'), {
+    loading: () => <ChartSkeleton height="min-h-[420px]" spinnerColor="border-t-[#8B5CF6]" />,
+    ssr: false
+});
 
 // Icons (simple SVG components)
 const UsersIcon = () => (

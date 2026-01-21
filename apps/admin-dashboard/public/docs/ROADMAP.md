@@ -126,14 +126,14 @@ Phased development plan for the FanFlick Admin Dashboard.
 ## Phase 6: Polish & Refinement (Week 6)
 **Goal:** UX improvements and production readiness.
 
-- [ ] Responsive design improvements
-- [ ] Add loading skeletons
+- [x] Responsive design improvements
+- [x] Add loading skeletons
 - [x] Improve error handling & messages
 - [x] Add success/error toast notifications
-- [ ] Optimize performance (lazy loading, etc.)
+- [x] Optimize performance (lazy loading, etc.)
 - [ ] Add keyboard shortcuts
-- [ ] Create admin user guide documentation
-- [ ] Security audit
+- [x] Create admin user guide documentation
+- [x] Security audit
 - [ ] Deploy dashboard to production
 
 **Deliverable:** Production-ready admin dashboard.
@@ -183,11 +183,12 @@ Phased development plan for the FanFlick Admin Dashboard.
   - Recent activity feed
 
 **In Progress:**
-- 🚧 Phase 5 - Advanced Moderation (80%)
+- 🚧 Phase 5 - Advanced Moderation (95%)
   - Content moderation backend (Complete)
   - Admin delete permissions (Complete)
   - Audit log model & endpoints (Complete)
   - Content moderation page (Complete)
+  - Audit log viewer (Complete)
   - Pending: Final testing of moderation workflows
 - 🚧 Phase 2 - Report Management (100%)
   - Reports list page (Complete)
@@ -200,10 +201,13 @@ Phased development plan for the FanFlick Admin Dashboard.
 
 **Next Up:**
 - 📋 Phase 6 - Polish & Refinement
-  - Responsive design
-  - Performance optimization
+  - Keyboard shortcuts
+  - Documentation
+  - Security Audit
 
 **Recent Fixes:**
+- ✅ Audit Logs: Fixed backend logic to correctly record admin actions (suspend, delete) (2026-01-21)
+- ✅ Performance: Implemented lazy loading and skeletons for dashboard charts (2026-01-21)
 - ✅ Fixed TypeScript iterator error in `adminController.ts` `getContent()` function (2026-01-20)
   - Resolved CI pipeline failure caused by mixed types in `Promise.all` results
 
